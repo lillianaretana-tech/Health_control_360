@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="theme-color" content="#B89576">
+<link rel="icon" href="./icon.svg" type="image/svg+xml">
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Control Salud &amp; Nutrición</title>
+<style>
+:root{
+  --bg:#f7f7f4; --card:#ffffff; --ink:#1f2a38; --muted:#6f7784;
+  --line:#dfe5ec; --accent:#173b6c; --accent2:#d88a72; --soft:#e8eef7;
+  --good:#245b9c; --warn:#9b6b16;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+header{padding:26px 18px;background:linear-gradient(135deg,#102a4c,#1d4f8f);color:white}
+header .wrap{max-width:1180px;margin:auto}
+h1{margin:0 0 6px;font-size:clamp(1.6rem,3vw,2.35rem)}
+header p{margin:0;opacity:.9}
+.wrap{max-width:1180px;margin:auto;padding:18px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.tab{border:0;background:#e8edf4;color:#26364a;padding:10px 14px;border-radius:999px;cursor:pointer;font-weight:700}
+.tab.active{background:var(--accent);color:#fff}
+.panel{display:none}.panel.active{display:block}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 4px 18px rgba(0,0,0,.035)}
+.span12{grid-column:span 12}.span8{grid-column:span 8}.span6{grid-column:span 6}.span4{grid-column:span 4}.span3{grid-column:span 3}
+@media(max-width:800px){.span8,.span6,.span4,.span3{grid-column:span 12}}
+h2,h3{margin-top:0}
+label{display:block;font-size:.86rem;font-weight:700;margin-bottom:5px}
+input,select,textarea,button{font:inherit}
+input,select,textarea{width:100%;border:1px solid #ccd5e0;border-radius:10px;padding:10px;background:white;color:var(--ink)}
+textarea{min-height:84px;resize:vertical}
+.formgrid{display:grid;grid-template-columns:repeat(12,1fr);gap:10px}
+.f6{grid-column:span 6}.f4{grid-column:span 4}.f3{grid-column:span 3}.f12{grid-column:span 12}
+@media(max-width:700px){.f6,.f4,.f3{grid-column:span 12}}
+button{border:0;border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:750}
+.primary{background:var(--accent);color:white}.secondary{background:#e9eef5;color:#223f66}.danger{background:#f7e6e2;color:#7b3829}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.stat{font-size:1.7rem;font-weight:800;margin-top:4px}.small{font-size:.84rem;color:var(--muted)}
+.kpi{background:#fafbfd;border:1px solid var(--line);border-radius:14px;padding:13px}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{padding:9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:#f1f4f8;position:sticky;top:0}
+.tablewrap{overflow:auto;max-height:430px;border:1px solid var(--line);border-radius:12px}
+.badge{display:inline-block;padding:4px 8px;border-radius:999px;background:var(--soft);color:#244a79;font-size:.78rem;font-weight:700}
+canvas{width:100%;height:280px;border-radius:12px;background:#fff}
+.notice{background:#fff8e7;border:1px solid #ead9aa;border-radius:12px;padding:12px;color:#6a5423}
+hr{border:0;border-top:1px solid var(--line);margin:18px 0}
+.footer{padding:18px;color:var(--muted);text-align:center;font-size:.82rem}
+
+  .ai-photo-box{margin-top:14px;padding:16px;border:1px solid #d7e3f2;border-radius:16px;background:linear-gradient(135deg,#f7fbff,#eef5ff)}
+  .ai-photo-title{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+  .ai-photo-preview{display:none;margin-top:12px;max-width:100%;max-height:300px;border-radius:14px;object-fit:cover;border:1px solid #d7e3f2}
+  .ai-result{display:none;margin-top:12px;padding:14px;border-radius:14px;background:#fff;border:1px solid #d7e3f2}
+  .ai-result-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}
+  .ai-metric{padding:9px;border-radius:11px;background:#f5f8fc;text-align:center}
+  .ai-metric b{display:block;font-size:1.05rem;color:#173b6c}
+  .ai-status{margin-top:9px;font-size:.9rem;color:#526173}
+  @media(max-width:700px){.ai-result-grid{grid-template-columns:repeat(2,1fr)}}
+
+
+.motivation-card{margin:14px 0 18px;padding:18px;border-radius:18px;background:linear-gradient(135deg,#102f59,#245d9b);color:white;box-shadow:0 10px 28px rgba(20,55,95,.16)}
+.motivation-card .mot-kicker{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;opacity:.82;font-weight:800}
+.motivation-card .mot-text{font-size:1.08rem;line-height:1.45;margin-top:7px;font-weight:700}
+.motivation-card .mot-sub{font-size:.86rem;opacity:.86;margin-top:7px}
+.collapse-toggle{margin-left:auto;border:0;background:#edf4fb;color:#173b6c;border-radius:10px;padding:7px 10px;cursor:pointer;font-weight:800}
+.card.collapsible-card>.card-collapse-body{display:block}.card.collapsible-card.is-collapsed>.card-collapse-body{display:none}
+.card.collapsible-card .collapse-head{display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
+.card.collapsible-card .collapse-head>h2,.card.collapsible-card .collapse-head>h3{margin:0;flex:1}
+@media(max-width:700px){.motivation-card{padding:15px;margin:10px 0 14px}.motivation-card .mot-text{font-size:1rem}.card.collapsible-card{padding:13px}}
+
+@media print{
+  header,.tabs,.noprint,.actions{display:none!important}
+  body{background:white}.panel{display:none!important}.panel.active{display:block!important}
+  .card{box-shadow:none;border-color:#bbb}
+}
+
+/* Proyecto Lilly 90 días v3.4 */
+.version{font-size:.76rem;opacity:.72;margin-top:7px}.heroGoal{background:linear-gradient(135deg,#102a4c,#1d4f8f);color:#fff;border:0}.heroGoal .small{color:#dbe8f7}.progress{height:12px;background:#dfe7f0;border-radius:999px;overflow:hidden;margin:10px 0}.progress>div{height:100%;background:#fff;border-radius:999px}.coach{border-left:5px solid var(--accent);background:#f7faff}.coachText{font-size:1.05rem;line-height:1.55}.choice{background:#edf3fa;color:#173b6c}.rest{background:#eef4fb;border-color:#cbd9ea;color:#173b6c}.minirow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.minirow>*{flex:1;min-width:130px}.check{display:flex;gap:8px;align-items:center}.check input{width:auto}.pill{display:inline-block;padding:5px 9px;border-radius:999px;background:#e8eef7;margin:2px;font-size:.8rem;font-weight:700}.dangerText{color:#8b3c2c}.goodText{color:#245b9c}
+
+/* v3.4 · IA corregible + cámara/galería + varias fotos + movimiento flexible */
+body{background:
+ radial-gradient(circle at 8% 5%,rgba(82,157,230,.16),transparent 24%),
+ radial-gradient(circle at 92% 18%,rgba(244,182,93,.15),transparent 22%),
+ linear-gradient(180deg,#f4f8fc 0%,#fbfdff 45%,#f5f8fb 100%)}
+header{position:relative;overflow:hidden;background:linear-gradient(120deg,#0c2748,#174f86 62%,#2877ad)}
+header:after{content:"";position:absolute;width:260px;height:260px;border:44px solid rgba(255,255,255,.08);border-radius:50%;right:-80px;top:-120px}
+header .wrap{position:relative;z-index:1}
+.card{border-radius:18px;box-shadow:0 8px 24px rgba(19,55,91,.07)}
+.heroGoal{position:relative;overflow:hidden;background:linear-gradient(135deg,#102a4c,#245e9d 68%,#3687b9)}
+.heroGoal:after{content:"🌿";position:absolute;right:22px;top:12px;font-size:4rem;opacity:.16;transform:rotate(-12deg)}
+.coach{background:linear-gradient(145deg,#fff,#f1f7ff);border-left:5px solid #3f86c7}
+.dayBudget{background:linear-gradient(145deg,#fff9ef,#fff);border-color:#f0d9ac}
+.kcalRing{width:118px;height:118px;border-radius:50%;display:grid;place-items:center;margin:auto;background:conic-gradient(#2f77b7 var(--pct,0%),#e7edf4 0);position:relative}
+.kcalRing:after{content:"";position:absolute;inset:10px;border-radius:50%;background:#fff}
+.kcalRing .inside{position:relative;z-index:1;text-align:center}.kcalRing b{font-size:1.45rem;color:#173b6c}
+.reminderCard{background:linear-gradient(135deg,#fff,#f5f9ff);border:1px solid #d8e6f4}
+.reminderBubble{padding:12px 14px;border-radius:15px;background:#eaf3fd;margin:8px 0;line-height:1.45}
+.illustration{display:flex;gap:12px;align-items:center;background:linear-gradient(135deg,#f2f8ff,#fff8ed);border:1px solid #e1e9f1;border-radius:18px;padding:15px}
+.illustration .art{font-size:3.2rem;line-height:1}.illustration strong{color:#173b6c}
+.milestones{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.milestone{padding:7px 10px;border-radius:999px;background:#eaf1f9;color:#244a79;font-weight:800;font-size:.8rem}.milestone.current{background:#173b6c;color:white}
+.truth{border-left:5px solid #e3a84c;background:#fffaf0}
+.notificationDot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#d0d8e2;margin-right:6px}.notificationDot.on{background:#4d9a66}
+@media(max-width:700px){.heroGoal:after{display:none}.kcalRing{width:105px;height:105px}}
+
+</style>
+<style>
+/* Health Control · edición calma */
+:root{--bg:#f8f4ed;--card:#fffdf9;--ink:#4a3b30;--muted:#85766a;--line:#e8ddd0;--accent:#84664d;--accent2:#b89576;--soft:#f2e8dc;--good:#6c8469;--warn:#a67e4c}
+body{background:radial-gradient(ellipse at 100% 4%,rgba(189,155,113,.12),transparent 33%),linear-gradient(180deg,#f9f6f0,#f4eee5)!important;color:var(--ink)}
+body:before{content:'✿';position:fixed;right:-45px;bottom:-95px;font-size:320px;color:rgba(155,123,89,.045);pointer-events:none;z-index:0}
+main,header{position:relative;z-index:1}
+header{background:linear-gradient(115deg,#e7d7c2,#f8efe3)!important;color:#49382b;padding:20px 14px}
+header:after{border-color:rgba(128,98,65,.06)}header p{color:#766556}
+.wrap{max-width:1040px;padding:14px}
+.card{background:rgba(255,253,249,.96);border:1px solid #e8ddd0;box-shadow:0 6px 22px rgba(91,70,48,.045)}
+.tabs{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:7px;padding:3px 0 11px;scrollbar-width:thin;position:sticky;top:0;z-index:10;background:rgba(248,244,237,.97)}
+.tab{white-space:nowrap;flex:0 0 auto;background:#efe5d8;color:#67503c;font-weight:650}.tab.active{background:#84664d;color:#fff}
+.primary{background:#84664d;color:#fff}.secondary,.choice{background:#f1e7dc;color:#654e3d}.danger{background:#f5e7e1}
+input,select,textarea{border-color:#dfd1c2;background:#fffdfa;color:#49382b}
+input:focus,select:focus,textarea:focus{outline:2px solid #c8ab8b;outline-offset:1px}
+.motivation-card{background:linear-gradient(115deg,#e9dccb,#f5eadd)!important;color:#574432;box-shadow:none;border:1px solid #e6d5c1;padding:13px 16px;margin:9px 0 13px}
+.motivation-card .mot-kicker{color:#806349}.motivation-card .mot-text{font-weight:600}.motivation-card .mot-sub{color:#806f61}
+.heroGoal{background:linear-gradient(120deg,#b79c80,#d5bfa7)!important;color:#382b20}.heroGoal .small{color:#47372a}
+.coach,.reminderCard,.dayBudget,.illustration,.ai-photo-box{background:#faf5ed!important;border-color:#e7d9c9!important}
+.ai-metric,.kpi,.reminderBubble,.rest,.notice{background:#f6eee3!important;border-color:#e9dccb!important;color:#604b38}
+.ai-metric b,.kcalRing b,.illustration strong{color:#76573e}.kcalRing{background:conic-gradient(#a88a6b var(--pct,0%),#eee3d6 0)}
+.badge,.pill,.milestone{background:#f0e5d8;color:#70563d}.milestone.current{background:#84664d;color:white}
+th{background:#f4eadf}.collapse-toggle{background:#f0e5d8;color:#6e523d}
+#comidas>.grid,#movimiento>.grid{align-items:start}
+#comidas>.grid>.card,#movimiento>.grid>.card{min-width:0}
+#comidas .span4{grid-column:span 6}#comidas .span8{grid-column:span 12}
+#movimiento .span4,#movimiento .span8{grid-column:span 6}
+.calm-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}.calm-head h2,.calm-head h3{margin:0;flex:1}
+.calm-toggle{background:#f0e5d8;color:#6a503b;padding:8px 11px;border-radius:999px;font-size:.85rem}
+.calm-collapsed>.calm-body{display:none}.calm-collapsed{padding-bottom:14px}
+.quick-note{font-size:.87rem;color:#786755;margin:0 0 14px}
+@media(max-width:760px){#comidas .span4,#comidas .span8,#movimiento .span4,#movimiento .span8{grid-column:span 12}.wrap{padding:10px}.card{padding:14px}.tabs{margin-bottom:10px}header h1{font-size:1.55rem}.motivation-card .mot-text{font-size:.94rem}.formgrid{gap:9px}.f6{grid-column:span 6}.f4,.f3{grid-column:span 6}.f12{grid-column:span 12}.card h2{font-size:1.13rem}}
+@media(max-width:390px){.f6{grid-column:span 12}}
+
+.calm-module>.calm-body > h2:first-child,.calm-module>.calm-body > h3:first-child{display:none}
+</style></head>
+<body>
+<header>
+<div class="wrap">
+<h1>Control Salud &amp; Nutrición</h1>
+<p>Tu acompañamiento para bajar de peso, moverte y sostener el proceso.</p><div class="version" style="display:inline-block;margin-top:12px;padding:7px 12px;border-radius:999px;background:#f5e9d9;color:#5a3b27;font-size:13px;font-weight:800;letter-spacing:.02em" aria-label="Versión de Health Control">Health Control · versión 3.5</div>
+</div>
+</header>
+<main class="wrap">
+<section class="motivation-card" id="dailyMotivation">
+<div class="mot-kicker">💙 Mensaje de hoy</div>
+<div class="mot-text" id="motivationText">Hoy no necesitás hacerlo perfecto. Necesitás seguir aquí.</div>
+<div class="mot-sub" id="motivationSub">Proyecto Lilly · No desaparecer del proceso.</div>
+</section>
+<div class="tabs noprint">
+
+
+
+
+
+
+
+
+<button class="tab active" data-tab="comidas">Alimentación</button><button class="tab" data-tab="movimiento">Movimiento</button><button class="tab" data-tab="inicio">Hoy</button><button class="tab" data-tab="medidas">Peso y medidas</button><button class="tab" data-tab="reportes">Reportes</button><button class="tab" data-tab="plan">Plan de entrenamiento</button><button class="tab" data-tab="respaldo">Respaldo</button><button class="tab" data-tab="cuenta">Cuenta / Nube</button></div>
+<section class="panel" id="inicio">
+<div class="grid">
+<div class="card span12 heroGoal">
+<div class="small">OBJETIVO ACTUAL</div><div style="display:flex;justify-content:space-between;gap:16px;align-items:end;flex-wrap:wrap"><div><div class="stat" id="goalHeadline">—</div><div class="small" id="goalSub"></div></div><div style="min-width:240px;flex:1;max-width:520px"><div class="progress"><div id="goalBar" style="width:0%"></div></div><div class="small" id="goalProgressText"></div></div></div>
+</div>
+<div class="card span8 coach"><h3>💙 Tu acompañamiento de hoy</h3><div class="coachText" id="coachMessage"></div><div class="actions" id="coachActions"></div></div>
+<div class="card span4"><h3>Movimiento de hoy</h3><div class="minirow"><div><label>Pasos</label><input id="quickSteps" min="0" placeholder="Ej. 6500" step="100" type="number"/></div><div><label>¿Cómo estuvo mi energía hoy? (1–5)</label><select id="quickEnergy"><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div></div><div class="actions"><button class="primary" id="quickSave" type="button">Actualizar mi día</button></div><div class="small" id="todayMoveStatus" style="margin-top:8px"></div></div>
+<div class="card span6 dayBudget">
+<h3>🍽️ Presupuesto de hoy</h3>
+<div style="display:grid;grid-template-columns:130px 1fr;gap:18px;align-items:center">
+<div class="kcalRing" id="kcalRing"><div class="inside"><b id="kcalRemaining">—</b><div class="small">restantes</div></div></div>
+<div><div class="small">Meta diaria</div><div class="stat" id="kcalTarget">1.600</div>
+<div style="margin-top:7px">Consumidas registradas: <b id="kcalConsumed">0 kcal</b></div>
+<div>Proteína registrada: <b id="proteinToday">0 g</b></div>
+<div class="small" id="foodCompleteness" style="margin-top:7px"></div></div>
+</div>
+</div>
+<div class="card span6 reminderCard">
+<h3>🔔 Lilly, no te me escondás 😄</h3>
+<div class="reminderBubble" id="reminderStatus">Revisando cómo vamos hoy…</div>
+<div class="actions"><button class="primary" id="enableNotifications" type="button">Activar notificaciones</button><button class="secondary" id="checkNow" type="button">Revisar mi día ahora</button></div>
+<div class="small" style="margin-top:8px"><span class="notificationDot" id="notifDot"></span><span id="notifState">Notificaciones del navegador sin activar.</span></div>
+</div>
+<div class="card span12 illustration"><div class="art">👟🥗💪🐾</div><div><strong>Destino: Lilly a los 60</strong><div class="small">Más ligera, fuerte, con energía y sin cargar “un Bruno” extra. Verse regia no cancela la meta. Los datos mandan; la culpa no.</div><div class="milestones"><span class="milestone">93</span><span class="milestone">89</span><span class="milestone">85</span><span class="milestone">80</span><span class="milestone">77</span><span class="milestone">75 kg 🎯</span></div></div></div>
+<div class="card span3"><div class="small">Último peso</div><div class="stat" id="kPeso">—</div><div class="small" id="kPesoFecha"></div></div>
+<div class="card span3"><div class="small">Cambio acumulado</div><div class="stat" id="kCambio">—</div><div class="small">desde el primer registro</div></div>
+<div class="card span3"><div class="small">Cintura actual</div><div class="stat" id="kCintura">—</div><div class="small">última medición disponible</div></div>
+<div class="card span3"><div class="small">Días con comidas</div><div class="stat" id="kDiasComida">0</div><div class="small">días registrados</div></div>
+<div class="card span8">
+<h3>Evolución del peso</h3>
+<canvas height="300" id="chartPeso" width="900"></canvas>
+</div>
+<div class="card span4">
+<h3>Esta semana</h3>
+<div class="small" id="semanaResumen">Todavía no hay datos suficientes.</div>
+</div>
+<div class="card span12 truth"><h3>🧭 Regla de oro</h3><div id="truthMessage">No nos comparamos con otras personas ni declaramos victoria porque 3–4 kg ya se noten. Si algo no se registró, lo preguntamos. Si hubo hamburguesa y papas, también se registran: <b>el dato nunca es una falta.</b></div></div>
+<div class="card span12 notice">
+        Los datos se guardan en este navegador mediante almacenamiento local. Usa la pestaña <b>Respaldo</b> periódicamente para descargar una copia.
+      </div>
+</div>
+</section>
+<section class="panel" id="movimiento">
+<div class="grid">
+<div class="card span12 calm-module calm-collapsed" data-module="movimiento-0" id="weeklyMovementCard"><div class="calm-head"><h2>🏃‍♀️ Mi movimiento de la semana</h2><button aria-expanded="false" class="calm-toggle" type="button">Mostrar +</button></div><div class="calm-body">
+<h2>🏃‍♀️ Mi movimiento de la semana</h2>
+<div class="small">Los días son flexibles. Sugerencia para fuerza: lunes · miércoles · sábado. Si un día no se puede, se mueve; no se pierde.</div>
+<div class="ai-result-grid" style="margin-top:12px">
+<div class="ai-metric"><span>🏋️ Fuerza cuerpo completo</span><b id="weekStrength">0 / 3</b></div>
+<div class="ai-metric"><span>❤️ Cardio</span><b id="weekCardio">0 / 180 min</b></div>
+</div>
+<div class="small" id="weekMovementMessage" style="margin-top:10px"></div>
+<div class="notice rest" style="margin-top:10px"><b>Viernes:</b> descanso programado. Lo que no se hizo esta semana no se convierte en deuda para la siguiente.</div>
+</div></div>
+<div class="card span4 calm-module" data-module="movimiento-1"><div class="calm-head"><h2>Registrar movimiento</h2><button aria-expanded="true" class="calm-toggle" type="button">Ocultar −</button></div><div class="calm-body"><h2>Registrar movimiento</h2><form id="formMovimiento"><div class="formgrid">
+<div class="f6"><label>Fecha</label><input id="eFecha" required="" type="date"/></div><div class="f6"><label>Pasos</label><input id="ePasos" min="0" step="100" type="number"/></div>
+<div class="f6"><label>Actividad</label><select id="eTipo"><option>Sin entrenamiento</option><option>Caminata</option><option>Trote</option><option>Fuerza cuerpo completo</option><option>Gimnasio - pesas</option><option>Gimnasio - pesas + cardio</option><option>Bicicleta</option><option>Escaleras / movimiento extra</option><option>Otro</option><option>Descanso</option></select></div>
+<div class="f6"><label>Minutos</label><input id="eMinutos" min="0" step="1" type="number"/></div><div class="f6"><label>¿Cómo estuvo mi energía hoy? (1–5)</label><input id="eEnergia" max="5" min="1" type="number"/></div><div class="f6"><label>Esfuerzo (1–10)</label><input id="eEsfuerzo" max="10" min="1" type="number"/></div>
+<div class="f12"><label>¿Cómo estuvo el día?</label><textarea id="eNotas" placeholder="Cansancio, trabajo pesado, lluvia, ganas, dolor, etc."></textarea></div>
+</div><div class="actions"><button class="primary" type="submit">Guardar movimiento</button><button class="secondary" type="reset">Limpiar</button></div></form></div></div>
+<div class="card span8 calm-module calm-collapsed" data-module="movimiento-2"><div class="calm-head"><h2>Historial de movimiento</h2><button aria-expanded="false" class="calm-toggle" type="button">Mostrar +</button></div><div class="calm-body"><h2>Historial de movimiento</h2><div class="tablewrap"><table><thead><tr><th>Fecha</th><th>Pasos</th><th>Actividad</th><th>Min.</th><th>Energía</th><th>Notas</th><th></th></tr></thead><tbody id="tablaMovimiento"></tbody></table></div></div></div>
+<div class="card span12 calm-module calm-collapsed" data-module="movimiento-3"><div class="calm-head"><h2>Regla del programa</h2><button aria-expanded="false" class="calm-toggle" type="button">Mostrar +</button></div><div class="calm-body"><h3>Regla del programa</h3><p id="movementRule">El objetivo no es hacer un entrenamiento perfecto todos los días. El objetivo es evitar varios días seguidos de inactividad buscando un Plan B realista.</p><div class="notice rest"><b>Viernes:</b> descanso programado. No hay deuda de ejercicio ni obligación de completar pasos.</div></div></div>
+</div>
+</section>
+<section class="panel" id="medidas">
+<div class="grid">
+<div class="card span4 calm-module" data-module="medidas-0"><div class="calm-head"><h2>Registrar peso y medidas</h2><button aria-expanded="true" class="calm-toggle" type="button">Ocultar −</button></div><div class="calm-body">
+<h2>Registrar peso y medidas</h2>
+<form id="formMedidas">
+<div class="formgrid">
+<div class="f6"><label>Fecha</label><input id="mFecha" required="" type="date"/></div>
+<div class="f6"><label>Peso (kg)</label><input id="mPeso" max="300" min="20" step="0.1" type="number"/></div>
+<div class="f6"><label>Cintura (cm)</label><input id="mCintura" step="0.1" type="number"/></div>
+<div class="f6"><label>Cadera (cm)</label><input id="mCadera" step="0.1" type="number"/></div>
+<div class="f6"><label>Muslo (cm)</label><input id="mMuslo" step="0.1" type="number"/></div>
+<div class="f6"><label>Brazo (cm)</label><input id="mBrazo" step="0.1" type="number"/></div>
+<div class="f12"><label>Notas</label><textarea id="mNotas" placeholder="Ej.: dormí bien, retención de líquido, entrenamiento fuerte..."></textarea></div>
+</div>
+<div class="actions"><button class="primary" type="submit">Guardar registro</button><button class="secondary" type="reset">Limpiar</button></div>
+</form>
+</div></div>
+<div class="card span8 calm-module calm-collapsed" data-module="medidas-1"><div class="calm-head"><h2>Historial</h2><button aria-expanded="false" class="calm-toggle" type="button">Mostrar +</button></div><div class="calm-body">
+<h2>Historial</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>Fecha</th><th>Peso</th><th>Cintura</th><th>Cadera</th><th>Muslo</th><th>Brazo</th><th>Notas</th><th></th></tr></thead>
+<tbody id="tablaMedidas"></tbody>
+</table></div>
+</div></div>
+</div>
+</section>
+<section class="panel active" id="comidas"><p class="quick-note">🌿 Empezá por registrar lo que comiste. Abrí solo lo que necesités; lo demás puede esperar.</p>
+<div class="grid">
+
+
+
+<div class="card span4 calm-module" data-module="comidas-0" style="border:1px solid #4d998b"><div class="calm-head"><h2>🥗 Catálogo nutricional</h2><button aria-expanded="true" class="calm-toggle" type="button">Ocultar −</button></div><div class="calm-body"><h2>🥗 Catálogo nutricional</h2><p class="small">Base inicial: Macros Nutri (nutricionista). También puedes agregar tus propios alimentos. Los valores corresponden a la porción indicada.</p><label>Buscar alimento</label><input autocomplete="off" id="foodSearch" placeholder="Ej.: gallo pinto, arroz, banano"/><select id="foodSelect" size="5" style="width:100%;margin-top:8px"></select><div class="small" id="foodInfo"></div><label>Cantidad de porciones (1 = porción del catálogo)</label><input id="foodQty" min="0.01" step="0.1" type="number" value="1"/><div class="actions"><button class="primary" id="foodAdd" type="button">Agregar a comida</button><button class="secondary" id="foodNewToggle" type="button">+ Nuevo alimento</button></div><div class="small" id="foodSelected" style="margin-top:8px"></div><div id="foodNewPanel" style="display:none;margin-top:12px"><h3>Alimento personalizado</h3><label>Nombre</label><input id="foodNewName"/><label>Porción de referencia (ej.: 100 g)</label><input id="foodNewPortion"/><div class="formgrid"><div class="f6"><label>Carbohidratos (g)</label><input id="foodNewCarbs" min="0" step="0.1" type="number"/></div><div class="f6"><label>Proteína (g)</label><input id="foodNewProtein" min="0" step="0.1" type="number"/></div><div class="f6"><label>Grasas (g)</label><input id="foodNewFat" min="0" step="0.1" type="number"/></div><div class="f6"><label>Calorías (kcal)</label><input id="foodNewCalories" min="0" step="1" type="number"/></div></div><button class="primary" id="foodSaveNew" type="button">Guardar en mi catálogo</button></div></div></div><div class="card span4 calm-module" data-module="comidas-1"><div class="calm-head"><h2>Registrar alimentación</h2><button aria-expanded="true" class="calm-toggle" type="button">Ocultar −</button></div><div class="calm-body">
+<h2 id="tituloFormComida">Registrar alimentación</h2>
+<form id="formComida">
+<div class="formgrid">
+<div class="f6"><label>Fecha</label><input id="cFecha" required="" type="date"/></div>
+<div class="f6"><label>Tipo</label>
+<select id="cTipo"><option>Desayuno</option><option>Merienda AM</option><option>Almuerzo</option><option>Merienda PM</option><option>Cena</option><option>Extra</option></select>
+</div>
+<div class="f12"><label>¿Qué comí?</label><textarea id="cDetalle" placeholder="Ej.: 2 huevos, gallo pinto, café con leche..." required=""></textarea></div>
+<div class="f6"><label>Porción / cantidad</label><input id="cPorcion" placeholder="Ej.: 1 taza, 120 g, 2 unidades"/></div>
+<div class="f6"><label>Hambre antes (1-10)</label><input id="cHambre" max="10" min="1" type="number"/></div>
+<div class="f6"><label>Agua (vasos)</label><input id="cAgua" min="0" step="1" type="number"/></div>
+<div class="f6"><label>Proteína aprox. (g)</label><input id="cProteina" min="0" step="0.1" type="number"/></div>
+<div class="f6"><label>Carbohidratos aprox. (g)</label><input id="cCarbohidratos" min="0" step="0.1" type="number"/></div>
+<div class="f6"><label>Grasa aprox. (g)</label><input id="cGrasa" min="0" step="0.1" type="number"/></div>
+<div class="f6"><label>Calorías aprox.</label><input id="cCalorias" min="0" step="1" type="number"/></div>
+<div class="f6"><label>Estado</label>
+<select id="cEstado"><option value="">—</option><option>Bien planificado</option><option>Improvisado</option><option>Antojo</option><option>Evento social</option></select>
+</div>
+<div class="f12"><label>Notas</label><textarea id="cNotas" placeholder="Saciedad, antojos, digestión, energía, etc."></textarea></div>
+</div>
+<div class="actions">
+<button class="primary" id="btnGuardarComida" type="submit">Guardar comida</button>
+<button class="secondary" id="btnCancelarEdicion" style="display:none" type="button">Cancelar edición</button>
+<button class="secondary" type="reset">Limpiar</button>
+</div>
+</form>
+</div></div><div class="card span8 calm-module calm-collapsed" data-module="comidas-2"><div class="calm-head"><h2>Diario de alimentación</h2><button aria-expanded="false" class="calm-toggle" type="button">Mostrar +</button></div><div class="calm-body">
+<div style="display:flex;gap:10px;justify-content:space-between;align-items:end;flex-wrap:wrap">
+<div><h2 style="margin-bottom:3px">Diario de alimentación</h2><div class="small">Puedes usar calorías y proteína solo si quieres; no son obligatorias.</div></div>
+<div style="min-width:190px"><label>Filtrar por fecha</label><input id="filtroComida" type="date"/></div>
+</div>
+<div class="tablewrap" style="margin-top:12px"><table>
+<thead><tr><th>Fecha</th><th>Tipo</th><th>Detalle</th><th>Porción</th><th>Prot.</th><th>Carb.</th><th>Grasa</th><th>Kcal</th><th>Estado</th><th></th></tr></thead>
+<tbody id="tablaComidas"></tbody>
+</table></div>
+<hr/>
+<div class="ai-photo-box">
+<div class="ai-photo-title">
+<div>
+<h3 style="margin:0">📸 Analizar comida con IA</h3>
+<div class="small">Puedes agregar hasta 3 fotos de la misma comida: plato completo, detalle, empaque o etiqueta. La IA las analiza juntas y tú confirmas antes de registrar.</div>
+</div>
+</div>
+<div class="actions">
+<label class="primary" style="display:inline-block;cursor:pointer">
+              📷 Tomar foto ahora
+              <input accept="image/*" capture="environment" id="mealCameraPhoto" style="display:none" type="file"/>
+</label>
+<label class="secondary" style="display:inline-block;cursor:pointer">
+              🖼️ Elegir de mi galería
+              <input accept="image/*" id="mealGalleryPhoto" multiple="" style="display:none" type="file"/>
+</label>
+<button class="secondary" disabled="" id="btnAnalyzeMeal" type="button">🤖 Analizar foto(s)</button>
+<button class="secondary" id="btnClearMealPhoto" type="button">Limpiar fotos</button>
+</div>
+<div id="mealPhotoGallery" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"></div>
+<img alt="Vista previa de la comida" class="ai-photo-preview" id="mealPhotoPreview" style="display:none"/>
+<div class="small" id="mealPhotoCount" style="margin-top:6px">0 / 3 fotos</div>
+<div style="margin-top:12px">
+<label>✏️ Corrección o dato que la foto no puede saber</label>
+<textarea id="mealCorrection" placeholder="Ej.: Es chayote, no papa. Son 2 huevos. El pan tiene Numar Light. No hay pepino ni zucchini."></textarea>
+</div>
+<div class="ai-status" id="mealAiStatus"></div>
+<div class="ai-result" id="mealAiResult">
+<div id="mealAiSummary"></div>
+<div class="ai-result-grid">
+<div class="ai-metric"><span>Calorías</span><b id="aiKcal">—</b></div>
+<div class="ai-metric"><span>Proteína</span><b id="aiProtein">—</b></div>
+<div class="ai-metric"><span>Carbos</span><b id="aiCarbs">—</b></div>
+<div class="ai-metric"><span>Grasa</span><b id="aiFat">—</b></div>
+</div>
+<div class="small"><b>Porciones estimadas:</b> <span id="aiPortions">—</span></div>
+<div class="small" style="margin-top:6px"><b>Confianza:</b> <span id="aiConfidence">—</span></div>
+<div class="small" style="margin-top:6px"><b>¿Algo que no se ve?</b> aceite, aderezo, salsa, azúcar/bebida u otro ingrediente puede cambiar la estimación.</div>
+<div class="actions">
+<button class="primary" id="btnUseMealAnalysis" type="button">✅ Pasar al registro</button>
+<button class="secondary" id="btnAnalyzeAgain" type="button">🔄 Recalcular con mi corrección</button>
+</div>
+</div>
+</div>
+<hr/>
+<h3>Importar estimación de ChatGPT</h3>
+<p class="small">Pega aquí el bloque que te entregue ChatGPT. El sistema buscará las comidas por fecha y tipo, y actualizará sus valores nutricionales.</p>
+<textarea id="importEstimacion" placeholder='Ejemplo:
+[
+  {"fecha":"2026-08-20","tipo":"Desayuno","proteina":18,"carbohidratos":42,"grasa":14,"calorias":370},
+  {"fecha":"2026-08-20","tipo":"Almuerzo","proteina":25,"carbohidratos":55,"grasa":20,"calorias":510}
+]'></textarea>
+<div class="actions">
+<button class="primary" id="btnImportEstimacion" type="button">Importar estimación</button>
+<button class="secondary" id="btnEjemploEstimacion" type="button">Ver ejemplo</button>
+</div>
+<div class="small" id="importEstimacionStatus" style="margin-top:8px"></div>
+</div></div></div>
+</section>
+<section class="panel" id="reportes">
+<div class="grid">
+<div class="card span12">
+<h2>Reportes</h2>
+<div class="formgrid noprint">
+<div class="f4"><label>Periodo</label><select id="rPeriodo"><option value="semana">Semana</option><option value="mes">Mes</option><option value="anio">Año</option></select></div>
+<div class="f4"><label>Fecha de referencia</label><input id="rFecha" type="date"/></div>
+<div class="f4" style="display:flex;align-items:end"><button class="primary" id="btnReporte" style="width:100%" type="button">Generar reporte</button></div>
+</div>
+<hr/>
+<div id="reporteSalida"></div>
+<div class="actions noprint">
+<button class="secondary" onclick="window.print()" type="button">Imprimir / Guardar PDF</button>
+</div>
+</div>
+</div>
+</section>
+<section class="panel" id="plan">
+<div class="grid">
+<div class="card span12">
+<div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap">
+<div>
+<h2 style="margin-bottom:4px">Plan de entrenamiento</h2>
+<div class="small">Fase 1 - inicio 24 de agosto de 2026</div>
+</div>
+<a class="secondary" href="plan_entrenamiento.pdf" style="text-decoration:none;display:inline-block;padding:10px 14px;border-radius:10px;font-weight:750" target="_blank">Abrir PDF</a>
+</div>
+<div style="margin-top:14px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff">
+<iframe src="plan_entrenamiento.pdf" style="width:100%;height:76vh;border:0;display:block" title="Plan de entrenamiento"></iframe>
+</div>
+<p class="small" style="margin-top:10px">Si tu navegador no muestra el PDF dentro de la página, usa el botón “Abrir PDF”.</p>
+</div>
+</div>
+</section>
+<section class="panel" id="respaldo">
+<div class="grid">
+<div class="card span6">
+<h2>Respaldo completo</h2>
+<p class="small">Descarga todos tus registros en un archivo JSON. Luego puedes restaurarlo en este u otro navegador.</p>
+<div class="actions"><button class="primary" id="exportJson">Descargar respaldo</button><label class="secondary" style="display:inline-flex;align-items:center;cursor:pointer;padding:10px 14px;border-radius:10px;font-weight:750">Restaurar respaldo<input accept=".json,application/json" hidden="" id="importJson" type="file"/></label></div>
+</div>
+<div class="card span6">
+<h2>Exportar para Excel</h2>
+<p class="small">Descarga archivos CSV separados para medidas y alimentación.</p>
+<div class="actions"><button class="secondary" id="exportMedidas">Medidas CSV</button><button class="secondary" id="exportComidas">Comidas CSV</button><button class="secondary" id="exportMovimiento">Movimiento CSV</button></div>
+</div>
+<div class="card span12">
+<h3>Zona de seguridad</h3>
+<p class="small">Esto elimina todos los datos almacenados en este navegador.</p>
+<button class="danger" id="borrarTodo">Borrar todos los datos</button>
+</div>
+</div>
+</section>
+<section class="panel" id="cuenta">
+<div class="grid">
+<div class="card span6">
+<h2>Cuenta y sincronización</h2>
+<p class="small">Conecta este control a Supabase para guardar tus datos en la nube y acceder desde otros dispositivos.</p>
+<div id="authLoggedOut">
+<div class="formgrid">
+<div class="f12"><label>Correo</label><input id="authEmail" placeholder="tu@correo.com" type="email"/></div>
+<div class="f12"><label>Contraseña</label><input id="authPassword" placeholder="Mínimo 6 caracteres" type="password"/></div>
+</div>
+<div class="actions">
+<button class="primary" id="btnLogin" type="button">Iniciar sesión</button>
+<button class="secondary" id="btnSignup" type="button">Crear cuenta</button>
+</div>
+</div>
+<div id="authLoggedIn" style="display:none">
+<p>Sesión activa: <b id="authUserEmail"></b></p>
+<div class="actions">
+<button class="primary" id="btnSync" type="button">Sincronizar ahora</button>
+<button class="secondary" id="btnPull" type="button">Traer datos de la nube</button>
+<button class="secondary" id="btnPush" type="button">Subir datos locales</button>
+<button class="danger" id="btnLogout" type="button">Cerrar sesión</button>
+</div>
+</div>
+<div class="notice" id="syncStatus" style="margin-top:14px">Modo local activo.</div>
+</div>
+<div class="card span6">
+<h2>Perfil y meta personal</h2><div class="formgrid">
+<div class="f4"><label>Edad</label><input id="cfgAge" type="number" value="58"/></div>
+<div class="f4"><label>Estatura (cm)</label><input id="cfgHeight" type="number" value="168"/></div>
+<div class="f4"><label>Meta calórica diaria</label><input id="cfgCalories" type="number" value="1600"/></div>
+<div class="f6"><label>Peso meta (kg)</label><input id="cfgGoal" step="0.1" type="number" value="75"/></div>
+<div class="f6"><label>Primera etapa (kg)</label><input id="cfgStage" step="0.1" type="number" value="89"/></div>
+<div class="f12"><button class="secondary" id="saveConfig" type="button">Guardar perfil y meta</button></div></div>
+<hr/><h3>Recordatorios</h3><p class="small">Desayuno 11:00 · Almuerzo 16:00 · Cena 20:30 · Movimiento 21:30. Los viernes no se persigue ejercicio.</p><hr/><h2>Cómo funciona</h2>
+<p class="small">Tus datos siguen guardándose localmente. Cuando inicias sesión, puedes sincronizarlos con las tablas exclusivas de esta app en Supabase.</p>
+<p class="small">La seguridad usa <b>Row Level Security (RLS)</b>: cada usuario solo puede leer y modificar sus propios registros.</p>
+</div>
+</div>
+</section>
+</main>
+<div class="footer">Control personal de salud y nutrición · HTML local</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.3/dist/umd/supabase.min.js"></script>
+<script>
+const DBKEY='saludNutricion_v1';
+let db = JSON.parse(localStorage.getItem(DBKEY) || '{"medidas":[],"comidas":[],"movimiento":[],"config":{"goal":75,"stage":89,"age":58,"height":168,"calories":1600}}');
+db.movimiento=db.movimiento||[]; db.config=db.config||{};
+if(!db.config.v3Migrated){db.config.goal=75;db.config.stage=89;db.config.age=db.config.age||58;db.config.height=db.config.height||168;db.config.calories=1600;db.config.v3Migrated=true;}
+db.config.goal=db.config.goal||75; db.config.stage=db.config.stage||89; db.config.age=db.config.age||58; db.config.height=db.config.height||168; db.config.calories=db.config.calories||1600;
+db.reminders=db.reminders||{};
+
+const SUPABASE_URL = "https://vgkyoyosjewdygxtnqvu.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZna3lveW9zamV3ZHlneHRucXZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2NTAxNDAsImV4cCI6MjA5ODIyNjE0MH0.oDxSWg61UFLqMh2MeEW6yxarZAjobhEA6TWm0KS_7CA";
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+});
+let currentUser = null;
+
+async function updateAuthUI(){
+  const { data } = await sb.auth.getSession();
+  currentUser = data?.session?.user || null;
+  const out = document.getElementById('authLoggedOut');
+  const inn = document.getElementById('authLoggedIn');
+  if(!out || !inn) return;
+  out.style.display = currentUser ? 'none' : 'block';
+  inn.style.display = currentUser ? 'block' : 'none';
+  document.getElementById('authUserEmail').textContent = currentUser?.email || '';
+  document.getElementById('syncStatus').textContent = currentUser
+    ? 'Conectado a Supabase. Tus registros pueden sincronizarse con la nube.'
+    : 'Modo local activo. Inicia sesión para sincronizar.';
+}
+
+function status(msg, error=false){
+  const el=document.getElementById('syncStatus'); if(!el)return;
+  el.textContent=msg;
+  el.style.background=error?'#fdebea':'#fff8e7';
+  el.style.borderColor=error?'#efc7c2':'#ead9aa';
+}
+
+async function login(){
+  const email=document.getElementById('authEmail').value.trim();
+  const password=document.getElementById('authPassword').value;
+  if(!email||!password){status('Ingresa correo y contraseña.',true);return;}
+  status('Conectando...');
+  const {error}=await sb.auth.signInWithPassword({email,password});
+  if(error){status('No se pudo iniciar sesión: '+error.message,true);return;}
+  await updateAuthUI(); status('Sesión iniciada correctamente.');
+}
+
+async function signup(){
+  const email=document.getElementById('authEmail').value.trim();
+  const password=document.getElementById('authPassword').value;
+  if(!email||password.length<6){status('Ingresa un correo válido y una contraseña de al menos 6 caracteres.',true);return;}
+  status('Creando cuenta...');
+  const {data,error}=await sb.auth.signUp({email,password});
+  if(error){status('No se pudo crear la cuenta: '+error.message,true);return;}
+  await updateAuthUI();
+  status(data?.session ? 'Cuenta creada y sesión iniciada.' : 'Cuenta creada. Revisa tu correo si Supabase solicita confirmación.');
+}
+
+async function logout(){
+  await sb.auth.signOut(); currentUser=null; await updateAuthUI(); status('Sesión cerrada. Modo local activo.');
+}
+
+function toCloudMedida(x){
+  return {
+    id:x.id, user_id:currentUser.id, fecha:x.fecha, peso:x.peso, cintura:x.cintura,
+    cadera:x.cadera, muslo:x.muslo, brazo:x.brazo, notas:x.notas||''
+  };
+}
+function toCloudComida(x){
+  return {
+    id:x.id, user_id:currentUser.id, fecha:x.fecha, tipo:x.tipo, detalle:x.detalle,
+    porcion:x.porcion||'', hambre:x.hambre, agua:x.agua, proteina:x.proteina,
+    calorias:x.calorias, carbohidratos:x.carbohidratos, grasa:x.grasa, estado:x.estado||'', notas:x.notas||''
+  };
+}
+function fromCloudMedida(x){return {id:x.id,fecha:x.fecha,peso:x.peso,cintura:x.cintura,cadera:x.cadera,muslo:x.muslo,brazo:x.brazo,notas:x.notas||''}}
+function fromCloudComida(x){return {id:x.id,fecha:x.fecha,tipo:x.tipo,detalle:x.detalle,porcion:x.porcion||'',hambre:x.hambre,agua:x.agua,proteina:x.proteina,carbohidratos:x.carbohidratos,grasa:x.grasa,calorias:x.calorias,estado:x.estado||'',notas:x.notas||''}}
+
+async function pushCloud(){
+  if(!currentUser){status('Primero inicia sesión.',true);return;}
+  status('Subiendo datos locales...');
+  if(db.medidas.length){
+    const {error}=await sb.from('lt_health_measurements').upsert(db.medidas.map(toCloudMedida),{onConflict:'id'});
+    if(error){status('Error subiendo medidas: '+error.message,true);return;}
+  }
+  if(db.comidas.length){
+    const {error}=await sb.from('lt_health_meals').upsert(db.comidas.map(toCloudComida),{onConflict:'id'});
+    if(error){status('Error subiendo comidas: '+error.message,true);return;}
+  }
+  status('Datos locales subidos a Supabase.');
+}
+
+async function pullCloud(){
+  if(!currentUser){status('Primero inicia sesión.',true);return;}
+  status('Descargando datos de la nube...');
+  const [m,c]=await Promise.all([
+    sb.from('lt_health_measurements').select('*').order('fecha',{ascending:true}),
+    sb.from('lt_health_meals').select('*').order('fecha',{ascending:true})
+  ]);
+  if(m.error){status('Error leyendo medidas: '+m.error.message,true);return;}
+  if(c.error){status('Error leyendo comidas: '+c.error.message,true);return;}
+  db.medidas=(m.data||[]).map(fromCloudMedida);
+  db.comidas=(c.data||[]).map(fromCloudComida);
+  localStorage.setItem(DBKEY,JSON.stringify(db)); renderAll();
+  status('Datos descargados de Supabase.');
+}
+
+async function syncCloud(){
+  if(!currentUser){status('Primero inicia sesión.',true);return;}
+  status('Sincronizando...');
+  const [m,c]=await Promise.all([
+    sb.from('lt_health_measurements').select('*'),
+    sb.from('lt_health_meals').select('*')
+  ]);
+  if(m.error||c.error){status('No se pudo leer Supabase. Verifica que hayas ejecutado el SQL de instalación.',true);return;}
+  const mergedM=new Map((m.data||[]).map(x=>[x.id,fromCloudMedida(x)]));
+  db.medidas.forEach(x=>mergedM.set(x.id,x));
+  const mergedC=new Map((c.data||[]).map(x=>[x.id,fromCloudComida(x)]));
+  db.comidas.forEach(x=>mergedC.set(x.id,x));
+  db.medidas=[...mergedM.values()];
+  db.comidas=[...mergedC.values()];
+  localStorage.setItem(DBKEY,JSON.stringify(db)); renderAll();
+  await pushCloud();
+  status('Sincronización completa.');
+}
+
+sb.auth.onAuthStateChange(async()=>{await updateAuthUI();});
+
+
+function save(){ localStorage.setItem(DBKEY,JSON.stringify(db)); renderAll(); if(currentUser){ pushCloud().catch(()=>{}); } }
+function hoy(){
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const day = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+function fmtDate(s){ if(!s)return ''; const [y,m,d]=s.split('-'); return `${d}/${m}/${y}`; }
+function num(v){ const n=parseFloat(v); return Number.isFinite(n)?n:null; }
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function esc(s=''){ return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m])); }
+
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active'); document.getElementById(b.dataset.tab).classList.add('active');
+  if(b.dataset.tab==='inicio') drawWeightChart();
+}));
+
+document.getElementById('mFecha').value=hoy();
+document.getElementById('cFecha').value=hoy();
+document.getElementById('rFecha').value=hoy();
+document.getElementById('eFecha').value=hoy();
+
+document.getElementById('formMedidas').addEventListener('submit',e=>{
+  e.preventDefault();
+  const item={id:uid(),fecha:mFecha.value,peso:num(mPeso.value),cintura:num(mCintura.value),cadera:num(mCadera.value),muslo:num(mMuslo.value),brazo:num(mBrazo.value),notas:mNotas.value.trim()};
+  if([item.peso,item.cintura,item.cadera,item.muslo,item.brazo].every(v=>v===null)){alert('Ingresa al menos un dato de peso o medida.');return}
+  db.medidas.push(item); save(); e.target.reset(); mFecha.value=hoy();
+});
+
+let editingMealId = null;
+
+function resetMealEditor(){
+  editingMealId = null;
+  const form = document.getElementById('formComida');
+  form.reset();
+  cFecha.value = hoy();
+  document.getElementById('tituloFormComida').textContent = 'Registrar alimentación';
+  document.getElementById('btnGuardarComida').textContent = 'Guardar comida';
+  document.getElementById('btnCancelarEdicion').style.display = 'none';
+}
+
+window.editComida = id => {
+  const x = db.comidas.find(c => c.id === id);
+  if(!x) return;
+  editingMealId = id;
+
+  cFecha.value = x.fecha || hoy();
+  cTipo.value = x.tipo || 'Desayuno';
+  cDetalle.value = x.detalle || '';
+  cPorcion.value = x.porcion || '';
+  cHambre.value = x.hambre ?? '';
+  cAgua.value = x.agua ?? '';
+  cProteina.value = x.proteina ?? '';
+  cCarbohidratos.value = x.carbohidratos ?? '';
+  cGrasa.value = x.grasa ?? '';
+  cCalorias.value = x.calorias ?? '';
+  cEstado.value = x.estado || '';
+  cNotas.value = x.notas || '';
+
+  document.getElementById('tituloFormComida').textContent = 'Editar alimentación';
+  document.getElementById('btnGuardarComida').textContent = 'Actualizar comida';
+  document.getElementById('btnCancelarEdicion').style.display = 'inline-block';
+
+  document.getElementById('formComida').scrollIntoView({behavior:'smooth', block:'start'});
+};
+
+document.getElementById('btnCancelarEdicion').addEventListener('click', resetMealEditor);
+
+document.getElementById('formComida').addEventListener('submit',e=>{
+  e.preventDefault();
+
+  const payload = {
+    fecha:cFecha.value,
+    tipo:cTipo.value,
+    detalle:cDetalle.value.trim(),
+    porcion:cPorcion.value.trim(),
+    hambre:num(cHambre.value),
+    agua:num(cAgua.value),
+    proteina:num(cProteina.value),
+    carbohidratos:num(cCarbohidratos.value),
+    grasa:num(cGrasa.value),
+    calorias:num(cCalorias.value),
+    estado:cEstado.value,
+    notas:cNotas.value.trim()
+  };
+
+  if(editingMealId){
+    const idx = db.comidas.findIndex(x => x.id === editingMealId);
+    if(idx >= 0){
+      db.comidas[idx] = {...db.comidas[idx], ...payload};
+    }
+  } else {
+    db.comidas.push({id:uid(), ...payload});
+  }
+
+  save();
+  resetMealEditor();
+});
+
+document.getElementById('filtroComida').addEventListener('change',renderComidas);
+document.getElementById('formComida').addEventListener('reset',()=>{
+  setTimeout(()=>{
+    if(editingMealId){
+      editingMealId = null;
+      cFecha.value = hoy();
+      document.getElementById('tituloFormComida').textContent = 'Registrar alimentación';
+      document.getElementById('btnGuardarComida').textContent = 'Guardar comida';
+      document.getElementById('btnCancelarEdicion').style.display = 'none';
+    } else {
+      cFecha.value = hoy();
+    }
+  },0);
+});
+
+
+document.getElementById('formMovimiento').addEventListener('submit',e=>{e.preventDefault();db.movimiento.push({id:uid(),fecha:eFecha.value,pasos:num(ePasos.value),tipo:eTipo.value,minutos:num(eMinutos.value),energia:num(eEnergia.value),esfuerzo:num(eEsfuerzo.value),notas:eNotas.value.trim()});save();e.target.reset();eFecha.value=hoy();});
+window.delMovimiento=id=>{if(confirm('¿Eliminar este registro de movimiento?')){db.movimiento=db.movimiento.filter(x=>x.id!==id);save();}};
+function weekBounds(){
+  const d=new Date(); const day=(d.getDay()+6)%7;
+  const mon=new Date(d); mon.setDate(d.getDate()-day); mon.setHours(0,0,0,0);
+  const sun=new Date(mon); sun.setDate(mon.getDate()+6); sun.setHours(23,59,59,999);
+  const iso=x=>`${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,'0')}-${String(x.getDate()).padStart(2,'0')}`;
+  return [iso(mon),iso(sun)];
+}
+function renderWeeklyMovement(){
+  const [a,b]=weekBounds();
+  const arr=db.movimiento.filter(x=>x.fecha>=a&&x.fecha<=b);
+  const strength=arr.filter(x=>/pesas|fuerza cuerpo completo/i.test(x.tipo||'') && (x.minutos||0)>0).length;
+  const cardio=arr.filter(x=>/caminata|trote|bicicleta|pesas \+ cardio|escaleras/i.test(x.tipo||''))
+                  .reduce((s,x)=>s+(Number(x.minutos)||0),0);
+  if(window.weekStrength) weekStrength.textContent=`${Math.min(strength,3)} / 3`;
+  if(window.weekCardio) weekCardio.textContent=`${cardio} / 180 min`;
+  if(window.weekMovementMessage){
+    const sf=Math.max(0,3-strength), cm=Math.max(0,180-cardio);
+    weekMovementMessage.textContent=(sf===0&&cm===0)
+      ?'🎉 Meta semanal completada. No hay que “pagar” ejercicio extra.'
+      :`Esta semana quedan ${sf} sesión(es) de fuerza y ${cm} min de cardio. Puedes repartirlos como mejor te funcione.`;
+  }
+}
+function renderMovimiento(){const arr=[...db.movimiento].sort((a,b)=>b.fecha.localeCompare(a.fecha));tablaMovimiento.innerHTML=arr.map(x=>`<tr><td>${fmtDate(x.fecha)}</td><td>${x.pasos??'—'}</td><td><span class="badge">${esc(x.tipo)}</span></td><td>${x.minutos??'—'}</td><td>${x.energia??'—'}</td><td>${esc(x.notas||'')}</td><td><button class="danger" onclick="delMovimiento('${x.id}')">×</button></td></tr>`).join('')||'<tr><td colspan="7" class="small">Sin registros.</td></tr>';renderWeeklyMovement();}
+function todayMove(){return [...db.movimiento].filter(x=>x.fecha===hoy()).sort((a,b)=>String(b.id).localeCompare(String(a.id)))[0]||null;}
+function consecutiveInactive(){let n=0,d=new Date();for(let i=0;i<7;i++){const iso=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;if(d.getDay()===5){d.setDate(d.getDate()-1);continue;}const x=db.movimiento.find(v=>v.fecha===iso);if(x && ((x.minutos||0)>0 || (x.pasos||0)>=7000))break;n++;d.setDate(d.getDate()-1);}return n;}
+function renderCoach(){const d=new Date(),fri=d.getDay()===5,x=todayMove(),steps=x?.pasos||0,energy=x?.energia||null,inactive=consecutiveInactive();let msg='',actions=[];if(fri){msg='<b>Viernes de descanso.</b> Hoy no hay entrenamiento pendiente. Descansá sin culpa; mañana seguimos. 🌙';}else if((x?.minutos||0)>=20 || steps>=8000){msg=`Bien. Hoy ya hay movimiento real${steps?` (${steps.toLocaleString()} pasos)`:''}. No necesito inventarte más trabajo; mantené el día y cerramos bien.`; }else if(inactive>=2){msg=`Llevamos <b>${inactive} días</b> sin suficiente movimiento. Hoy sí quiero que hagamos algo. No tiene que ser perfecto: elegí una opción y rompemos la racha.`;actions=['Caminar 20 min','Gimnasio corto','Bicicleta 20–30 min'];}else if(energy && energy<=2){msg='Veo que la energía está baja. No voy a pedirte una gran sesión, pero tampoco quiero perder el hábito. ¿Me das 10–20 minutos suaves?';actions=['Caminar 15 min','Movilidad + 10 min','Hoy necesito descanso real'];}else{msg='Hoy todavía tenemos margen. La prioridad es movernos de alguna forma que sí quepa en tu día.';actions=['Caminar 20–30 min','Gimnasio / pesas','Bicicleta','Escaleras / movimiento extra'];}coachMessage.innerHTML=msg;coachActions.innerHTML=actions.map(a=>`<button type="button" class="choice" onclick="choosePlan('${a.replaceAll("'","\\'")}')">${a}</button>`).join('');todayMoveStatus.textContent=x?`${steps?steps.toLocaleString()+' pasos · ':''}${x.tipo||''}${x.minutos?` · ${x.minutos} min`:''}`:'Todavía no has actualizado el movimiento de hoy.';quickSteps.value=x?.pasos??'';quickEnergy.value=x?.energia??'';}
+window.choosePlan=a=>{alert('Plan elegido: '+a+'\n\nLa meta de esta versión es ayudarte a decidir y registrar. En la siguiente conexión con IA, este contexto podrá generar seguimiento personalizado.');};
+document.getElementById('quickSave').onclick=()=>{let x=todayMove();if(x){x.pasos=num(quickSteps.value);x.energia=num(quickEnergy.value);}else db.movimiento.push({id:uid(),fecha:hoy(),pasos:num(quickSteps.value),tipo:'Sin entrenamiento',minutos:null,energia:num(quickEnergy.value),esfuerzo:null,notas:''});save();};
+document.getElementById('saveConfig').onclick=()=>{db.config.goal=num(cfgGoal.value)||75;db.config.stage=num(cfgStage.value)||89;db.config.age=num(cfgAge.value)||58;db.config.height=num(cfgHeight.value)||168;db.config.calories=num(cfgCalories.value)||1600;save();};
+function renderGoal(){cfgGoal.value=db.config.goal||75;cfgStage.value=db.config.stage||89;cfgAge.value=db.config.age||58;cfgHeight.value=db.config.height||168;cfgCalories.value=db.config.calories||1600;const lp=lastMetric('peso'),fp=firstMetric('peso');if(!lp){goalHeadline.textContent='Registrá tu peso para comenzar';goalSub.textContent='La balanza será una medida principal del objetivo.';goalProgressText.textContent='';goalBar.style.width='0%';return;}const start=fp?.peso??lp.peso,goal=db.config.goal||75,stage=db.config.stage||89,lost=start-lp.peso,total=start-goal,pct=total>0?Math.max(0,Math.min(100,lost/total*100)):0;goalHeadline.textContent=`${lp.peso.toFixed(1)} kg → ${goal.toFixed(1)} kg`;goalSub.textContent=`Primera etapa: ${stage.toFixed(1)} kg · faltan ${Math.max(0,lp.peso-stage).toFixed(1)} kg para alcanzarla`;goalProgressText.textContent=`${Math.max(0,lost).toFixed(1)} kg bajados desde el inicio · objetivo total ${Math.max(0,total).toFixed(1)} kg`;goalBar.style.width=pct+'%';}
+
+function todayMeals(){return db.comidas.filter(x=>x.fecha===hoy());}
+function mealExists(type){return todayMeals().some(x=>String(x.tipo||'').toLowerCase()===type.toLowerCase());}
+function renderBudget(){
+  const meals=todayMeals(), consumed=meals.reduce((s,x)=>s+(Number(x.calorias)||0),0), prot=meals.reduce((s,x)=>s+(Number(x.proteina)||0),0);
+  const target=Number(db.config.calories)||1600, remaining=target-consumed, pct=Math.max(0,Math.min(100,consumed/target*100));
+  kcalTarget.textContent=target.toLocaleString('es-CR')+' kcal'; kcalConsumed.textContent=Math.round(consumed).toLocaleString('es-CR')+' kcal';
+  kcalRemaining.textContent=(remaining>=0?'':'−')+Math.abs(Math.round(remaining)).toLocaleString('es-CR')+' kcal';
+  proteinToday.textContent=Math.round(prot)+' g'; kcalRing.style.setProperty('--pct',pct+'%');
+  const missing=meals.filter(x=>x.calorias==null).length;
+  foodCompleteness.innerHTML=missing?`⚠️ Hay <b>${missing}</b> registro(s) de hoy sin calorías estimadas; el restante puede no ser real.`:
+    (meals.length?'✓ Todo lo registrado hoy tiene calorías.':'Todavía no hay comidas registradas hoy.');
+}
+function minutesNow(){const d=new Date();return d.getHours()*60+d.getMinutes();}
+function currentPrompt(){
+  const d=new Date(), min=minutesNow(), fri=d.getDay()===5, msgs=[];
+  if(min>=11*60 && !mealExists('Desayuno')) msgs.push('Hola Lili 💙, ya son más de las 11 y no veo desayuno. ¿No desayunaste o todavía no lo registraste? Sea lo que sea, lo anotamos sin juicio.');
+  if(min>=16*60 && !mealExists('Almuerzo')) msgs.push('Lili 👀, ¿qué almorzamos hoy? No veo almuerzo registrado. Si fue hamburguesa y papas, también cuentan: prefiero el dato verdadero a un día “perfecto” incompleto.');
+  if(min>=20*60+30 && !mealExists('Cena')) msgs.push('Lili 🌙, ¿no cenaste nada o se nos quedó la cena sin registrar? Contame qué hubo y cerramos el día completo.');
+  const mv=todayMove();
+  if(!fri && min>=21*60+30 && !(mv && ((mv.minutos||0)>=10 || (mv.pasos||0)>=7000))) msgs.push('Todavía no veo movimiento suficiente hoy. ¿Caminaste, te moviste bastante o hacemos un Plan B de 10–20 minutos?');
+  if(fri && min>=21*60) msgs.push('Hoy es viernes: descanso real. Nada de deuda de ejercicio. 💙');
+  return msgs.length?msgs[msgs.length-1]:'Vamos bien por ahora. Yo sigo pendiente de los registros de hoy. 💙';
+}
+function renderReminder(){reminderStatus.textContent=currentPrompt();updateNotifUI();}
+function updateNotifUI(){
+  if(!('Notification' in window)){notifState.textContent='Este navegador no admite notificaciones web.';enableNotifications.style.display='none';return}
+  const on=Notification.permission==='granted';notifDot.classList.toggle('on',on);
+  notifState.textContent=on?'Notificaciones del navegador activadas.':'Tocá “Activar notificaciones” para dar permiso.';
+  enableNotifications.textContent=on?'Notificaciones activadas ✓':'Activar notificaciones';
+}
+async function requestNotifications(){
+  if(!('Notification' in window)){alert('Este navegador no admite notificaciones web.');return}
+  const p=await Notification.requestPermission(); updateNotifUI();
+  if(p==='granted') new Notification('Proyecto Lilly 💙',{body:'Listo. Te voy a recordar tus registros cuando la app esté abierta o activa.'});
+}
+function maybeNotify(){
+  renderReminder();
+  if(!('Notification' in window)||Notification.permission!=='granted') return;
+  const d=new Date(), min=minutesNow(), fri=d.getDay()===5;
+  const slots=[
+    ['desayuno',11*60,()=>!mealExists('Desayuno'),'Lili, ¿y el desayuno?','No veo desayuno registrado. ¿Qué comimos hoy?'],
+    ['almuerzo',16*60,()=>!mealExists('Almuerzo'),'Lili, ¿qué almorzamos?','No veo el almuerzo. Aunque no haya sido perfecto, lo registramos 💙'],
+    ['cena',20*60+30,()=>!mealExists('Cena'),'¿Y la cena, Lili?','No veo cena registrada. Cerremos el día con datos reales.'],
+    ['movimiento',21*60+30,()=>!fri && !todayMove(),'¿Nos movimos hoy?','Si no hubo gimnasio, todavía puede existir un Plan B corto.']
+  ];
+  for(const [key,t,cond,title,body] of slots){
+    if(min>=t && min<t+120 && cond() && db.reminders[key]!==hoy()){
+      try{new Notification(title,{body});db.reminders[key]=hoy();localStorage.setItem(DBKEY,JSON.stringify(db));}catch(e){}
+    }
+  }
+}
+document.getElementById('enableNotifications').onclick=requestNotifications;
+document.getElementById('checkNow').onclick=()=>{renderReminder();alert(currentPrompt());};
+setInterval(maybeNotify,60000);
+
+
+
+let mealPhotoDataUrls=[];
+let mealAiData=null;
+
+function compressMealImage(file,maxSide=1280,quality=.82){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onerror=()=>reject(new Error('No se pudo leer la foto.'));
+    reader.onload=()=>{
+      const img=new Image();
+      img.onerror=()=>reject(new Error('No se pudo abrir la imagen.'));
+      img.onload=()=>{
+        let w=img.width,h=img.height;
+        const scale=Math.min(1,maxSide/Math.max(w,h));
+        w=Math.round(w*scale);h=Math.round(h*scale);
+        const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
+        canvas.getContext('2d').drawImage(img,0,0,w,h);
+        resolve(canvas.toDataURL('image/jpeg',quality));
+      };
+      img.src=reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderMealPhotos(){
+  mealPhotoGallery.innerHTML=mealPhotoDataUrls.map((src,i)=>`
+    <div style="position:relative;width:92px">
+      <img src="${src}" alt="Foto ${i+1}" style="width:92px;height:92px;object-fit:cover;border-radius:14px;border:1px solid #dbe4ef">
+      <button type="button" onclick="removeMealPhoto(${i})" aria-label="Quitar foto"
+        style="position:absolute;right:-5px;top:-7px;border:0;border-radius:999px;width:25px;height:25px;padding:0;background:#fff;color:#8b3c2c;box-shadow:0 2px 8px #0002">×</button>
+    </div>`).join('');
+  mealPhotoCount.textContent=`${mealPhotoDataUrls.length} / 3 fotos`;
+  btnAnalyzeMeal.disabled=mealPhotoDataUrls.length===0;
+}
+
+window.removeMealPhoto=i=>{
+  mealPhotoDataUrls.splice(i,1);
+  mealAiData=null; mealAiResult.style.display='none';
+  renderMealPhotos();
+  mealAiStatus.textContent=mealPhotoDataUrls.length?'Fotos listas. Puedes analizar cuando quieras.':'';
+};
+
+async function chooseMealPhoto(file){
+  if(!file)return;
+  if(mealPhotoDataUrls.length>=3){
+    mealAiStatus.textContent='Puedes usar hasta 3 fotos por comida.';
+    if(window.mealCameraPhoto) mealCameraPhoto.value='';
+    if(window.mealGalleryPhoto) mealGalleryPhoto.value='';
+    return;
+  }
+  mealAiData=null;
+  mealAiResult.style.display='none';
+  mealAiStatus.textContent='Preparando foto…';
+  try{
+    mealPhotoDataUrls.push(await compressMealImage(file));
+    renderMealPhotos();
+    mealAiStatus.textContent=mealPhotoDataUrls.length===1
+      ?'Foto lista. Puedes analizar o agregar otra foto del mismo plato/etiqueta.'
+      :`${mealPhotoDataUrls.length} fotos listas. La IA las analizará como una sola comida.`;
+  }catch(e){
+    mealAiStatus.textContent=e.message||'No se pudo preparar la foto.';
+  }finally{
+    if(window.mealCameraPhoto) mealCameraPhoto.value='';
+    if(window.mealGalleryPhoto) mealGalleryPhoto.value='';
+  }
+}
+
+function clearMealPhoto(){
+  mealPhotoDataUrls=[];mealAiData=null;
+  if(window.mealCameraPhoto) mealCameraPhoto.value='';
+  if(window.mealGalleryPhoto) mealGalleryPhoto.value='';
+  mealCorrection.value='';
+  mealPhotoGallery.innerHTML='';mealPhotoCount.textContent='0 / 3 fotos';
+  mealAiResult.style.display='none';mealAiStatus.textContent='';
+  btnAnalyzeMeal.disabled=true;
+}
+
+async function analyzeMealPhoto(){
+  if(!mealPhotoDataUrls.length)return;
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session){
+    mealAiStatus.textContent='Inicia sesión en Cuenta / Nube para usar el análisis con IA.';
+    return;
+  }
+  btnAnalyzeMeal.disabled=true;
+  mealAiStatus.textContent='🤖 Analizando todas las fotos y tus correcciones…';
+  try{
+    const resp=await fetch(`${SUPABASE_URL}/functions/v1/analyze-meal`,{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'Authorization':`Bearer ${session.access_token}`,
+        'apikey':SUPABASE_KEY
+      },
+      body:JSON.stringify({
+        images:mealPhotoDataUrls,
+        image:mealPhotoDataUrls[0],
+        meal_type:cTipo.value,
+        correction:mealCorrection.value.trim()
+      })
+    });
+    const raw=await resp.text();
+    let result={};try{result=JSON.parse(raw)}catch(_){}
+    if(!resp.ok)throw new Error(result.error||raw||`Error ${resp.status}`);
+    mealAiData=result;
+    mealAiSummary.innerHTML=`<b>${esc(result.summary||'Comida analizada')}</b>${result.question?`<div class="small" style="margin-top:6px">💬 ${esc(result.question)}</div>`:''}`;
+    aiKcal.textContent=result.calories!=null?Math.round(result.calories):'—';
+    aiProtein.textContent=result.protein_g!=null?`${Math.round(result.protein_g)} g`:'—';
+    aiCarbs.textContent=result.carbs_g!=null?`${Math.round(result.carbs_g)} g`:'—';
+    aiFat.textContent=result.fat_g!=null?`${Math.round(result.fat_g)} g`:'—';
+    aiPortions.textContent=(result.items||[]).map(x=>`${x.name}${x.portion?' · '+x.portion:''}`).join(' | ')||'—';
+    aiConfidence.textContent=result.confidence||'media';
+    mealAiResult.style.display='block';
+    mealAiStatus.textContent='Estimación lista. Si algo está mal, escríbelo arriba y toca “Recalcular con mi corrección”.';
+  }catch(e){
+    mealAiStatus.textContent='No se pudo analizar: '+(e.message||e);
+  }finally{btnAnalyzeMeal.disabled=false;}
+}
+
+function useMealAnalysis(){
+  if(!mealAiData)return;
+  cDetalle.value=mealAiData.summary||((mealAiData.items||[]).map(x=>x.name).join(', '));
+  cPorcion.value=(mealAiData.items||[]).map(x=>`${x.name}: ${x.portion||'estimada'}`).join(' | ');
+  cProteina.value=mealAiData.protein_g??'';
+  cCarbohidratos.value=mealAiData.carbs_g??'';
+  cGrasa.value=mealAiData.fat_g??'';
+  cCalorias.value=mealAiData.calories??'';
+  const correction=mealCorrection.value.trim();
+  const note=`Estimación por IA desde ${mealPhotoDataUrls.length} foto(s)${mealAiData.confidence?' · confianza '+mealAiData.confidence:''}${correction?' · Corrección confirmada: '+correction:''}${mealAiData.assumptions?.length?' · Supuestos: '+mealAiData.assumptions.join('; '):''}`;
+  cNotas.value=[cNotas.value,note].filter(Boolean).join('\n');
+  document.getElementById('formComida').scrollIntoView({behavior:'smooth',block:'start'});
+  mealAiStatus.textContent='Datos pasados al registro. Puedes corregirlos y luego tocar “Guardar comida”.';
+}
+
+mealCameraPhoto.addEventListener('change',async e=>{
+  await chooseMealPhoto(e.target.files?.[0]);
+});
+mealGalleryPhoto.addEventListener('change',async e=>{
+  const files=[...(e.target.files||[])];
+  for(const file of files){
+    if(mealPhotoDataUrls.length>=3) break;
+    await chooseMealPhoto(file);
+  }
+  if(files.length && mealPhotoDataUrls.length>=3 && files.length>3){
+    mealAiStatus.textContent='Se cargaron las primeras 3 fotos. Ese es el máximo por comida.';
+  }
+  mealGalleryPhoto.value='';
+});
+btnClearMealPhoto.onclick=clearMealPhoto;
+btnAnalyzeMeal.onclick=analyzeMealPhoto;
+btnAnalyzeAgain.onclick=analyzeMealPhoto;
+btnUseMealAnalysis.onclick=useMealAnalysis;
+renderMealPhotos();
+
+function aiContext(){const lp=lastMetric('peso'),lc=lastMetric('cintura'),moves=[...db.movimiento].sort((a,b)=>b.fecha.localeCompare(a.fecha)).slice(0,7),meals=[...db.comidas].sort((a,b)=>b.fecha.localeCompare(a.fecha)).slice(0,20);return {fecha:hoy(),objetivo:{peso_actual:lp?.peso??null,peso_meta:db.config.goal,primera_etapa:db.config.stage,cintura:lc?.cintura??null,edad:db.config.age,estatura_cm:db.config.height,meta_calorica:db.config.calories},reglas:{viernes_descanso:true,prioridad:'pérdida de peso real preservando fuerza y adherencia',estrategia:'si no cabe Plan A, proponer Plan B de movimiento',patron:'no permitir declarar victoria tras perder 3–4 kg; sostener hasta la meta',registro_honesto:'preguntar por comidas faltantes sin culpa ni juicio; omitir registro puede ser evitación',comparacion:'no comparar con otras personas; usar tendencia propia y meta personal'},movimiento_reciente:moves,alimentacion_reciente:meals};}
+
+window.delMedida=id=>{ if(confirm('¿Eliminar este registro?')){db.medidas=db.medidas.filter(x=>x.id!==id);save();}};
+window.delComida=async id=>{
+  if(!confirm('¿Eliminar esta comida?')) return;
+
+  db.comidas=db.comidas.filter(x=>x.id!==id);
+  localStorage.setItem(DBKEY,JSON.stringify(db));
+  renderAll();
+
+  if(currentUser){
+    const {error}=await sb.from('lt_health_meals').delete().eq('id',id);
+    if(error){
+      status('La comida se eliminó localmente, pero hubo un error al eliminarla de Supabase: '+error.message,true);
+    } else {
+      status('Comida eliminada correctamente.');
+    }
+  }
+};
+
+function renderMedidas(){
+  const arr=[...db.medidas].sort((a,b)=>b.fecha.localeCompare(a.fecha));
+  tablaMedidas.innerHTML=arr.map(x=>`<tr><td>${fmtDate(x.fecha)}</td><td>${x.peso??'—'}</td><td>${x.cintura??'—'}</td><td>${x.cadera??'—'}</td><td>${x.muslo??'—'}</td><td>${x.brazo??'—'}</td><td>${esc(x.notas)}</td><td><button class="danger" onclick="delMedida('${x.id}')">×</button></td></tr>`).join('')||'<tr><td colspan="8" class="small">Sin registros.</td></tr>';
+}
+
+function renderComidas(){
+  const f=filtroComida.value;
+  const arr=[...db.comidas].filter(x=>!f||x.fecha===f).sort((a,b)=>b.fecha.localeCompare(a.fecha));
+  tablaComidas.innerHTML=arr.map(x=>`<tr><td>${fmtDate(x.fecha)}</td><td><span class="badge">${esc(x.tipo)}</span></td><td>${esc(x.detalle)}</td><td>${esc(x.porcion)}</td><td>${x.proteina??'—'}</td><td>${x.carbohidratos??'—'}</td><td>${x.grasa??'—'}</td><td>${x.calorias??'—'}</td><td>${esc(x.estado)}</td><td><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="secondary" type="button" onclick="editComida('${x.id}')" title="Editar">✏️</button><button class="danger" type="button" onclick="delComida('${x.id}')" title="Eliminar">×</button></div></td></tr>`).join('')||'<tr><td colspan="10" class="small">Sin registros.</td></tr>';
+}
+
+function lastMetric(key){
+  return [...db.medidas].filter(x=>x[key]!=null).sort((a,b)=>b.fecha.localeCompare(a.fecha))[0];
+}
+function firstMetric(key){
+  return [...db.medidas].filter(x=>x[key]!=null).sort((a,b)=>a.fecha.localeCompare(b.fecha))[0];
+}
+
+function renderInicio(){
+  const lp=lastMetric('peso'), fp=firstMetric('peso'), lc=lastMetric('cintura');
+  kPeso.textContent=lp?`${lp.peso.toFixed(1)} kg`:'—';
+  kPesoFecha.textContent=lp?fmtDate(lp.fecha):'';
+  if(lp&&fp){const d=lp.peso-fp.peso;kCambio.textContent=`${d>0?'+':''}${d.toFixed(1)} kg`;}else kCambio.textContent='—';
+  kCintura.textContent=lc?`${lc.cintura.toFixed(1)} cm`:'—';
+  kDiasComida.textContent=new Set(db.comidas.map(x=>x.fecha)).size;
+  const [ini,fin]=periodBounds('semana',hoy());
+  const ms=db.medidas.filter(x=>x.fecha>=ini&&x.fecha<=fin&&x.peso!=null);
+  const cs=db.comidas.filter(x=>x.fecha>=ini&&x.fecha<=fin);
+  const prot=cs.reduce((s,x)=>s+(x.proteina||0),0);
+  const carb=cs.reduce((s,x)=>s+(x.carbohidratos||0),0);
+  const fat=cs.reduce((s,x)=>s+(x.grasa||0),0);
+  const kcal=cs.reduce((s,x)=>s+(x.calorias||0),0);
+  semanaResumen.innerHTML=`<p><b>${fmtDate(ini)}–${fmtDate(fin)}</b></p>
+  <p>Pesajes: <b>${ms.length}</b><br>Comidas registradas: <b>${cs.length}</b><br>Proteína registrada: <b>${prot||0} g</b><br>Carbohidratos registrados: <b>${carb||0} g</b><br>Grasa registrada: <b>${fat||0} g</b><br>Calorías registradas: <b>${kcal||0}</b></p>
+  <p>Recuerda: si no registras calorías o proteína, esos totales no representan tu consumo real.</p>`;
+  drawWeightChart();
+}
+
+function drawWeightChart(){
+  const c=document.getElementById('chartPeso'),ctx=c.getContext('2d'), W=c.width,H=c.height;
+  ctx.clearRect(0,0,W,H); ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
+  const arr=[...db.medidas].filter(x=>x.peso!=null).sort((a,b)=>a.fecha.localeCompare(b.fecha));
+  if(arr.length<2){ctx.fillStyle='#6f7b8b';ctx.font='16px sans-serif';ctx.fillText('Agrega al menos dos registros de peso para ver la gráfica.',30,50);return}
+  const vals=arr.map(x=>x.peso), min=Math.min(...vals)-1,max=Math.max(...vals)+1;
+  const pad={l:55,r:25,t:25,b:45}, iw=W-pad.l-pad.r, ih=H-pad.t-pad.b;
+  ctx.strokeStyle='#dfe5ec';ctx.lineWidth=1;
+  for(let i=0;i<5;i++){let y=pad.t+ih*i/4;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();
+    const v=max-(max-min)*i/4;ctx.fillStyle='#687587';ctx.font='12px sans-serif';ctx.fillText(v.toFixed(1),8,y+4);}
+  ctx.strokeStyle='#173b6c';ctx.lineWidth=3;ctx.beginPath();
+  arr.forEach((x,i)=>{const px=pad.l+iw*(i/(arr.length-1)),py=pad.t+ih*((max-x.peso)/(max-min));i?ctx.lineTo(px,py):ctx.moveTo(px,py)});
+  ctx.stroke();
+  ctx.fillStyle='#173b6c';arr.forEach((x,i)=>{const px=pad.l+iw*(i/(arr.length-1)),py=pad.t+ih*((max-x.peso)/(max-min));ctx.beginPath();ctx.arc(px,py,4,0,Math.PI*2);ctx.fill()});
+  ctx.fillStyle='#687587';ctx.font='12px sans-serif';
+  const shown=[0,Math.floor((arr.length-1)/2),arr.length-1];
+  [...new Set(shown)].forEach(i=>{const px=pad.l+iw*(i/(arr.length-1));ctx.fillText(fmtDate(arr[i].fecha),Math.max(5,px-28),H-15)});
+}
+
+function periodBounds(periodo,fecha){
+  const d=new Date(fecha+'T12:00:00');
+  let a,b;
+  if(periodo==='semana'){
+    const day=(d.getDay()+6)%7; a=new Date(d); a.setDate(d.getDate()-day); b=new Date(a); b.setDate(a.getDate()+6);
+  } else if(periodo==='mes'){
+    a=new Date(d.getFullYear(),d.getMonth(),1,12); b=new Date(d.getFullYear(),d.getMonth()+1,0,12);
+  } else {
+    a=new Date(d.getFullYear(),0,1,12); b=new Date(d.getFullYear(),11,31,12);
+  }
+  const iso=x=>`${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,'0')}-${String(x.getDate()).padStart(2,'0')}`;
+  return [iso(a),iso(b)];
+}
+
+function avg(arr){return arr.length?arr.reduce((a,b)=>a+b,0)/arr.length:null}
+function generateReport(){
+  const [ini,fin]=periodBounds(rPeriodo.value,rFecha.value||hoy());
+  const ms=[...db.medidas].filter(x=>x.fecha>=ini&&x.fecha<=fin).sort((a,b)=>a.fecha.localeCompare(b.fecha));
+  const cs=db.comidas.filter(x=>x.fecha>=ini&&x.fecha<=fin);
+  const pesos=ms.filter(x=>x.peso!=null);
+  const p0=pesos[0]?.peso,p1=pesos[pesos.length-1]?.peso;
+  const cintura=ms.filter(x=>x.cintura!=null);
+  const w0=cintura[0]?.cintura,w1=cintura[cintura.length-1]?.cintura;
+  const days=[...new Set(cs.map(x=>x.fecha))];
+  const proteins=cs.filter(x=>x.proteina!=null).map(x=>x.proteina),
+        carbs=cs.filter(x=>x.carbohidratos!=null).map(x=>x.carbohidratos),
+        fats=cs.filter(x=>x.grasa!=null).map(x=>x.grasa),
+        calories=cs.filter(x=>x.calorias!=null).map(x=>x.calorias);
+  const byType={}; cs.forEach(x=>byType[x.tipo]=(byType[x.tipo]||0)+1);
+  const change=(a,b,u)=>a!=null&&b!=null?`${b-a>0?'+':''}${(b-a).toFixed(1)} ${u}`:'—';
+  reporteSalida.innerHTML=`
+    <h3>${rPeriodo.options[rPeriodo.selectedIndex].text}: ${fmtDate(ini)} al ${fmtDate(fin)}</h3>
+    <div class="grid">
+      <div class="span3 kpi"><div class="small">Peso inicial</div><div class="stat">${p0!=null?p0.toFixed(1)+' kg':'—'}</div></div>
+      <div class="span3 kpi"><div class="small">Peso final</div><div class="stat">${p1!=null?p1.toFixed(1)+' kg':'—'}</div></div>
+      <div class="span3 kpi"><div class="small">Cambio peso</div><div class="stat">${change(p0,p1,'kg')}</div></div>
+      <div class="span3 kpi"><div class="small">Cambio cintura</div><div class="stat">${change(w0,w1,'cm')}</div></div>
+      <div class="span4 kpi"><div class="small">Comidas registradas</div><div class="stat">${cs.length}</div></div>
+      <div class="span4 kpi"><div class="small">Días con registro</div><div class="stat">${days.length}</div></div>
+      <div class="span4 kpi"><div class="small">Pesajes</div><div class="stat">${pesos.length}</div></div>
+    </div>
+    <hr>
+    <h3>Resumen de alimentación</h3>
+    <p>Proteína registrada: <b>${proteins.reduce((a,b)=>a+b,0).toFixed(0)} g</b> · Carbohidratos: <b>${carbs.reduce((a,b)=>a+b,0).toFixed(0)} g</b> · Grasa: <b>${fats.reduce((a,b)=>a+b,0).toFixed(0)} g</b> · Calorías: <b>${calories.reduce((a,b)=>a+b,0).toFixed(0)}</b></p>
+    <p class="small">Promedios por día con comida registrada: proteína <b>${days.length?(proteins.reduce((a,b)=>a+b,0)/days.length).toFixed(0):0} g</b> · carbohidratos <b>${days.length?(carbs.reduce((a,b)=>a+b,0)/days.length).toFixed(0):0} g</b> · grasa <b>${days.length?(fats.reduce((a,b)=>a+b,0)/days.length).toFixed(0):0} g</b> · calorías <b>${days.length?(calories.reduce((a,b)=>a+b,0)/days.length).toFixed(0):0}</b>. Solo cuentan los valores que hayas ingresado.</p>
+    <p>${Object.entries(byType).map(([k,v])=>`<span class="badge">${esc(k)}: ${v}</span>`).join(' ')||'Sin comidas registradas.'}</p>
+    <hr>
+    <h3>Mediciones del periodo</h3>
+    <div class="tablewrap"><table><thead><tr><th>Fecha</th><th>Peso</th><th>Cintura</th><th>Cadera</th><th>Muslo</th><th>Brazo</th></tr></thead><tbody>
+    ${ms.map(x=>`<tr><td>${fmtDate(x.fecha)}</td><td>${x.peso??'—'}</td><td>${x.cintura??'—'}</td><td>${x.cadera??'—'}</td><td>${x.muslo??'—'}</td><td>${x.brazo??'—'}</td></tr>`).join('')||'<tr><td colspan="6">Sin datos.</td></tr>'}
+    </tbody></table></div>`;
+}
+document.getElementById('btnReporte').addEventListener('click',generateReport);
+
+function download(name,text,type='text/plain'){
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;a.click();URL.revokeObjectURL(a.href);
+}
+document.getElementById('exportJson').onclick=()=>download(`respaldo_salud_${hoy()}.json`,JSON.stringify(db,null,2),'application/json');
+document.getElementById('importJson').onchange=async e=>{
+  const f=e.target.files[0];if(!f)return;
+  try{const data=JSON.parse(await f.text());if(!Array.isArray(data.medidas)||!Array.isArray(data.comidas))throw new Error();db=data;db.movimiento=db.movimiento||[];db.config=db.config||{goal:75,stage:89,age:58,height:168,calories:1600};save();alert('Respaldo restaurado.');}
+  catch{alert('El archivo no parece ser un respaldo válido.');}
+  e.target.value='';
+};
+function csv(rows,cols){
+  const q=v=>`"${String(v??'').replaceAll('"','""')}"`; return [cols.map(c=>q(c[0])).join(','),...rows.map(r=>cols.map(c=>q(r[c[1]])).join(','))].join('\n');
+}
+document.getElementById('exportMedidas').onclick=()=>download(`medidas_${hoy()}.csv`,'\ufeff'+csv(db.medidas,[['Fecha','fecha'],['Peso kg','peso'],['Cintura cm','cintura'],['Cadera cm','cadera'],['Muslo cm','muslo'],['Brazo cm','brazo'],['Notas','notas']]),'text/csv;charset=utf-8');
+document.getElementById('exportMovimiento').onclick=()=>download(`movimiento_${hoy()}.csv`,'\ufeff'+csv(db.movimiento,[['Fecha','fecha'],['Pasos','pasos'],['Actividad','tipo'],['Minutos','minutos'],['Energía','energia'],['Esfuerzo','esfuerzo'],['Notas','notas']]),'text/csv;charset=utf-8');
+document.getElementById('exportComidas').onclick=()=>download(`comidas_${hoy()}.csv`,'\ufeff'+csv(db.comidas,[['Fecha','fecha'],['Tipo','tipo'],['Detalle','detalle'],['Porción','porcion'],['Hambre','hambre'],['Agua vasos','agua'],['Proteína g','proteina'],['Carbohidratos g','carbohidratos'],['Grasa g','grasa'],['Calorías','calorias'],['Estado','estado'],['Notas','notas']]),'text/csv;charset=utf-8');
+document.getElementById('borrarTodo').onclick=()=>{if(confirm('¿Seguro? Se eliminarán TODOS los registros de este navegador.')){db={medidas:[],comidas:[],movimiento:[],config:{goal:75,stage:89,age:58,height:168,calories:1600},reminders:{}};save();}};
+
+function normalizarTipo(s=''){
+  return String(s).trim().toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+}
+
+function importarEstimacion(){
+  const raw=document.getElementById('importEstimacion').value.trim();
+  const msg=document.getElementById('importEstimacionStatus');
+  if(!raw){msg.textContent='Pega primero el bloque de estimación.';return;}
+  let data;
+  try{
+    data=JSON.parse(raw);
+  }catch(e){
+    msg.textContent='No pude leer el bloque. Pídeme que te lo entregue en formato JSON para importar.';
+    return;
+  }
+  if(!Array.isArray(data)){data=[data];}
+  let actualizadas=0, noEncontradas=[];
+  data.forEach(item=>{
+    if(!item.fecha || !item.tipo){noEncontradas.push('Registro sin fecha/tipo');return;}
+    const matches=db.comidas.filter(x=>x.fecha===item.fecha && normalizarTipo(x.tipo)===normalizarTipo(item.tipo));
+    if(!matches.length){noEncontradas.push(`${item.fecha} · ${item.tipo}`);return;}
+    let target=matches[0];
+    if(item.detalle){
+      const exact=matches.find(x=>normalizarTipo(x.detalle).includes(normalizarTipo(item.detalle)) || normalizarTipo(item.detalle).includes(normalizarTipo(x.detalle)));
+      if(exact) target=exact;
+    }
+    if(item.proteina!=null) target.proteina=num(item.proteina);
+    if(item.carbohidratos!=null) target.carbohidratos=num(item.carbohidratos);
+    if(item.grasa!=null) target.grasa=num(item.grasa);
+    if(item.calorias!=null) target.calorias=num(item.calorias);
+    if(item.notas_estimacion){
+      target.notas = (target.notas ? target.notas + ' | ' : '') + 'Estimación: ' + item.notas_estimacion;
+    }
+    actualizadas++;
+  });
+  localStorage.setItem(DBKEY,JSON.stringify(db));
+  renderAll();
+  if(currentUser){pushCloud().catch(()=>{});}
+  msg.textContent=`Actualizadas: ${actualizadas}` + (noEncontradas.length ? ` · No encontradas: ${noEncontradas.join(', ')}` : ' · Importación completa.');
+}
+
+function ejemploEstimacion(){
+  const fecha=document.getElementById('cFecha').value || hoy();
+  document.getElementById('importEstimacion').value=JSON.stringify([
+    {"fecha":fecha,"tipo":"Desayuno","proteina":18,"carbohidratos":42,"grasa":14,"calorias":370},
+    {"fecha":fecha,"tipo":"Almuerzo","proteina":25,"carbohidratos":55,"grasa":20,"calorias":510}
+  ],null,2);
+}
+
+document.getElementById('btnImportEstimacion')?.addEventListener('click',importarEstimacion);
+document.getElementById('btnEjemploEstimacion')?.addEventListener('click',ejemploEstimacion);
+
+function renderAll(){renderMedidas();renderComidas();renderMovimiento();renderInicio();renderGoal();renderCoach();renderBudget();renderReminder();}
+
+document.getElementById('btnLogin')?.addEventListener('click',login);
+document.getElementById('btnSignup')?.addEventListener('click',signup);
+document.getElementById('btnLogout')?.addEventListener('click',logout);
+document.getElementById('btnSync')?.addEventListener('click',syncCloud);
+document.getElementById('btnPull')?.addEventListener('click',pullCloud);
+document.getElementById('btnPush')?.addEventListener('click',pushCloud);
+updateAuthUI();
+
+renderAll();generateReport();
+
+const MOTIVATION_MESSAGES=[
+"Hoy no necesitás hacerlo perfecto. Necesitás seguir aquí.",
+"La misión de hoy es sencilla: no desaparecer del proceso.",
+"Un día difícil también cuenta si lo registramos y seguimos.",
+"La báscula de hoy es un dato. Lo que manda es la tendencia.",
+"No buscamos una Lilly más bonita. Esa ya existe. Construimos una Lilly más fuerte, ligera y saludable.",
+"Comer de más no borra el plan. Registramos y seguimos.",
+"Hoy hacemos lo que podamos con el día que tenemos.",
+"Cada decisión pequeña cuenta más que una semana perfecta seguida de tres semanas desaparecida.",
+"Meta 75. Sin carreras absurdas, sin castigos y sin abandonar a mitad del camino.",
+"Si hoy toca poco, hacemos poco. Pero seguimos conectadas con el proceso.",
+"Tu trabajo no es ganar todo el camino hoy. Es completar el día de hoy.",
+"La constancia también se ve así: volver rápido después de un tropiezo.",
+"No necesitás compensar una comida. Necesitás continuar con la siguiente decisión.",
+"La foto no juzga y el registro tampoco. Son datos para ayudarte a decidir.",
+"No negociamos con el «ya casi». Celebramos cada avance y seguimos hacia 75.",
+"Hoy puede ser un día normal y aun así acercarte a la meta.",
+"Tu cuerpo no necesita castigo; necesita un plan que puedas sostener.",
+"Si el día se complicó, todavía podemos salvarlo con una decisión sencilla.",
+"La Lilly de 60 se construye con los días comunes como este. 💙",
+"Una comida no define la semana. Seguimos.",
+"Lo importante no es no desviarse nunca; es no convertir un desvío en desaparición.",
+"Hoy miramos datos, no excusas ni culpas.",
+"Lo que buscamos no es bajar rápido y volver. Es llegar y quedarnos.",
+"Menos peso que cargar, más fuerza para vivir.",
+"La perfección es pésima compañera de viaje. La constancia sí llega a 75.",
+"Cuando el espejo diga «ya estamos regias», contestamos: sí… y seguimos. 😏",
+"No escondamos la hamburguesa. 😂 Foto, registro y seguimos.",
+"Tu plan tiene espacio para la vida real. Por eso puede durar.",
+"Hoy sumamos evidencia de que esta vez no vamos a desaparecer.",
+"No estás empezando otra dieta. Estás construyendo una forma de cuidarte que continúa después de 75.",
+"Si ayer no salió como queríamos, hoy no pagamos ninguna deuda. Simplemente retomamos.",
+"Hoy: comer con intención, movernos según el día y registrar con sinceridad.",
+"No esperemos al lunes ni a sentirnos inspiradas. El próximo paso sirve.",
+"No vamos a dejar que 93 se convierta en la nueva normalidad. Estamos de paso.",
+"Cada registro honesto vale más que un día «perfecto» que nunca ocurrió.",
+"El objetivo no es ganarle a nadie. Es acercarte a la Lilly que querés ser."
+];
+function lillyDateKey(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function lillyHash(s){let h=0;for(let i=0;i<s.length;i++)h=((h<<5)-h)+s.charCodeAt(i)|0;return Math.abs(h)}
+function lillyLatestWeight(){try{const a=(db?.medidas||[]).filter(x=>Number.isFinite(Number(x.peso))).sort((a,b)=>String(b.fecha).localeCompare(String(a.fecha)));return a.length?Number(a[0].peso):null}catch(_){return null}}
+function renderDailyMotivation(){
+ const el=document.getElementById('motivationText'),sub=document.getElementById('motivationSub');if(!el)return;
+ const d=new Date(),day=d.getDay(),hour=d.getHours(),w=lillyLatestWeight(),today=lillyDateKey();
+ let meals=0;try{meals=(db?.comidas||[]).filter(x=>x.fecha===today).length}catch(_){}
+ let msg;
+ if(day===5)msg="Viernes de descanso. 💙 Descansar también forma parte del plan. Hoy no hay ejercicio que compensar ni culpa que pagar.";
+ else if(w!==null&&w<=75)msg="Llegamos a 75. 🎉 Ahora empieza la parte que antes faltaba: mantener lo logrado sin desaparecer del proceso.";
+ else if(w!==null&&w<=80)msg="80 kg. 💙 Ya recorriste muchísimo, pero todavía no cerramos: destino 75 y luego mantenimiento.";
+ else if(w!==null&&w<=85)msg="85 kg: esto ya no es entusiasmo de inicio, es progreso sostenido. Celebramos… y seguimos hacia 75.";
+ else if(w!==null&&w<=89)msg="Sí, estás regia. 😏 Y aquí antes aparecía el «ya estuvo». Esta vez celebramos 89 y seguimos. Meta: 75.";
+ else if(hour>=15&&meals===0)msg="Hola Lili 👀 Hoy todavía no veo comidas registradas. Sea ensalada o hamburguesa con papas: la registramos y seguimos.";
+ else msg=MOTIVATION_MESSAGES[lillyHash(today)%MOTIVATION_MESSAGES.length];
+ el.textContent=msg;if(sub)sub.textContent=day===5?"Hoy toca vivir el viernes, sin deuda de ejercicio.":"Proyecto Lilly · No desaparecer del proceso.";
+}
+function setupCollapsibleModules(){
+ [...document.querySelectorAll('main .card')].forEach((card,idx)=>{
+  if(card.dataset.collapseReady==="1")return;
+  const h=card.querySelector(':scope > h2, :scope > h3');if(!h)return;
+  const head=document.createElement('div');head.className='collapse-head';card.insertBefore(head,h);head.appendChild(h);
+  const btn=document.createElement('button');btn.type='button';btn.className='collapse-toggle';head.appendChild(btn);
+  const body=document.createElement('div');body.className='card-collapse-body';while(head.nextSibling)body.appendChild(head.nextSibling);card.appendChild(body);
+  card.classList.add('collapsible-card');card.dataset.collapseReady="1";
+  const key='lillyCollapse_'+(card.id||h.textContent.trim().slice(0,40)||idx);
+  const apply=()=>{const c=localStorage.getItem(key)==='1';card.classList.toggle('is-collapsed',c);btn.textContent=c?'+':'−';btn.setAttribute('aria-expanded',String(!c))};
+  const toggle=e=>{e?.preventDefault();localStorage.setItem(key,card.classList.contains('is-collapsed')?'0':'1');apply()};
+  btn.onclick=toggle;head.addEventListener('click',e=>{if(e.target!==btn)toggle(e)});apply();
+ });
+}
+document.addEventListener('DOMContentLoaded',()=>{setupCollapsibleModules();renderDailyMotivation()});
+
+
+// Catálogo: el Excel es una referencia inmutable; los alimentos propios se guardan por separado.
+const BASE_FOODS=[{"id":"nutri-1","nombre":"Aguacate","porcion":"100 g","carbohidratos":8.8,"proteina":2.5,"grasa":15.0,"calorias":160.0,"categoria":"Grasas","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-2","nombre":"Aceite de oliva","porcion":"100 ml","carbohidratos":0.0,"proteina":0.0,"grasa":93.3,"calorias":840.0,"categoria":"Grasas","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-3","nombre":"Aceite de Girasol","porcion":"100ml","carbohidratos":3.6,"proteina":0.7,"grasa":100.0,"calorias":929.0,"categoria":"Grasas","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-4","nombre":"Mantequilla dos pinos","porcion":"100 g","carbohidratos":0.0,"proteina":0.0,"grasa":80.0,"calorias":721.0,"categoria":"Grasas","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-5","nombre":"Aceitunas verdes","porcion":"100 g","carbohidratos":6.7,"proteina":0.0,"grasa":13.3,"calorias":133.0,"categoria":"Grasas","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-6","nombre":"Mantequilla numar light","porcion":"100g","carbohidratos":7.7,"proteina":7.7,"grasa":38.5,"calorias":385.0,"categoria":"Grasas","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-7","nombre":"Agua de Pipa","porcion":"250 ml","carbohidratos":9.3,"proteina":1.8,"grasa":0.5,"calorias":48.0,"categoria":"Fruta","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-8","nombre":"Banano Mediano","porcion":"66 g","carbohidratos":15.0,"proteina":0.7,"grasa":0.2,"calorias":59.0,"categoria":"Fruta","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-9","nombre":"Cas","porcion":"145 g","carbohidratos":15.1,"proteina":1.7,"grasa":1.2,"calorias":70.0,"categoria":"Fruta","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-10","nombre":"Ciruela","porcion":"135 g","carbohidratos":15.4,"proteina":0.9,"grasa":0.3,"calorias":62.0,"categoria":"Fruta","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-11","nombre":"Fresas","porcion":"200 g","carbohidratos":15.2,"proteina":1.3,"grasa":0.6,"calorias":64.0,"categoria":"Fruta","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-12","nombre":"Guanábana","porcion":"90 g","carbohidratos":15.1,"proteina":0.9,"grasa":0.3,"calorias":59.0,"categoria":"Fruta","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-13","nombre":"Guayaba Madura","porcion":"125 g","carbohidratos":14.9,"proteina":1.0,"grasa":0.8,"calorias":64.0,"categoria":"Fruta","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-14","nombre":"Guayaba Verde","porcion":"68 g","carbohidratos":15.5,"proteina":0.7,"grasa":0.8,"calorias":65.0,"categoria":"Fruta","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-15","nombre":"Jocote","porcion":"100 g","carbohidratos":26.7,"proteina":1.4,"grasa":0.1,"calorias":102.0,"categoria":"Fruta","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-16","nombre":"Kiwi","porcion":"100 g","carbohidratos":14.7,"proteina":1.1,"grasa":0.5,"calorias":61.0,"categoria":"Fruta","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-17","nombre":"Mandarina","porcion":"100 g","carbohidratos":13.0,"proteina":0.8,"grasa":0.3,"calorias":53.0,"categoria":"Fruta","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-18","nombre":"Mango Maduro","porcion":"100 g","carbohidratos":15.4,"proteina":0.5,"grasa":0.2,"calorias":59.0,"categoria":"Fruta","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-19","nombre":"Mango Verde","porcion":"100 g","carbohidratos":11.5,"proteina":0.4,"grasa":0.2,"calorias":44.0,"categoria":"Fruta","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-20","nombre":"Manzana","porcion":"100 g","carbohidratos":13.8,"proteina":0.3,"grasa":0.2,"calorias":52.0,"categoria":"Fruta","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-21","nombre":"Melocotón","porcion":"100 g","carbohidratos":12.4,"proteina":1.2,"grasa":0.3,"calorias":51.0,"categoria":"Fruta","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-22","nombre":"Melon","porcion":"100 g","carbohidratos":8.0,"proteina":0.8,"grasa":0.2,"calorias":34.0,"categoria":"Fruta","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-23","nombre":"Naranja","porcion":"100 g","carbohidratos":11.8,"proteina":0.9,"grasa":0.1,"calorias":47.0,"categoria":"Fruta","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-24","nombre":"Papaya","porcion":"100 g","carbohidratos":11.0,"proteina":1.0,"grasa":0.3,"calorias":43.0,"categoria":"Fruta","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-25","nombre":"Pera","porcion":"100 g","carbohidratos":19.0,"proteina":0.6,"grasa":0.6,"calorias":52.0,"categoria":"Fruta","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-26","nombre":"Piña","porcion":"100 g","carbohidratos":13.5,"proteina":0.5,"grasa":0.1,"calorias":51.0,"categoria":"Fruta","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-27","nombre":"Sandia","porcion":"100 g","carbohidratos":7.6,"proteina":0.6,"grasa":0.2,"calorias":30.0,"categoria":"Fruta","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-28","nombre":"Uva","porcion":"100 g","carbohidratos":17.2,"proteina":0.6,"grasa":0.4,"calorias":67.0,"categoria":"Fruta","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-29","nombre":"Apio Crudo","porcion":"100 g","carbohidratos":3.0,"proteina":0.7,"grasa":0.2,"calorias":14.0,"categoria":"Verdura","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-30","nombre":"Brocoli Cocido","porcion":"100 g","carbohidratos":7.2,"proteina":2.4,"grasa":0.4,"calorias":35.0,"categoria":"Verdura","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-31","nombre":"Brocoli Crudo","porcion":"100 g","carbohidratos":6.6,"proteina":2.8,"grasa":0.3,"calorias":34.0,"categoria":"Verdura","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-32","nombre":"Camote Cocido","porcion":"100 g","carbohidratos":17.7,"proteina":1.4,"grasa":0.1,"calorias":76.0,"categoria":"Verdura","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-33","nombre":"Camote Crudo","porcion":"100 g","carbohidratos":20.0,"proteina":1.5,"grasa":0.1,"calorias":86.0,"categoria":"Verdura","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-34","nombre":"Chayote Cocido","porcion":"100 g","carbohidratos":5.1,"proteina":0.6,"grasa":0.5,"calorias":24.0,"categoria":"Verdura","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-35","nombre":"Chayote Crudo","porcion":"100 g","carbohidratos":7.7,"proteina":0.9,"grasa":0.2,"calorias":31.0,"categoria":"Verdura","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-36","nombre":"Coliflor Cocida","porcion":"100 g","carbohidratos":4.1,"proteina":1.8,"grasa":0.5,"calorias":23.0,"categoria":"Verdura","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-37","nombre":"Coliflor Cruda","porcion":"100 g","carbohidratos":5.3,"proteina":2.0,"grasa":0.1,"calorias":25.0,"categoria":"Verdura","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-38","nombre":"Elote Cocido","porcion":"100 g","carbohidratos":25.1,"proteina":3.3,"grasa":1.8,"calorias":108.0,"categoria":"Verdura","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-39","nombre":"Elote Crudo","porcion":"100 g","carbohidratos":33.5,"proteina":3.6,"grasa":1.4,"calorias":161.0,"categoria":"Verdura","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-40","nombre":"Espinaca","porcion":"100 g","carbohidratos":0.6,"proteina":2.9,"grasa":0.4,"calorias":23.0,"categoria":"Verdura","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-41","nombre":"Hierbabuena","porcion":"100 g","carbohidratos":8.4,"proteina":3.3,"grasa":0.7,"calorias":44.0,"categoria":"Verdura","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-42","nombre":"Lechuga","porcion":"100 g","carbohidratos":3.0,"proteina":1.0,"grasa":0.3,"calorias":17.0,"categoria":"Verdura","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-43","nombre":"Papa Cocida","porcion":"100 g","carbohidratos":20.0,"proteina":1.7,"grasa":0.1,"calorias":86.0,"categoria":"Verdura","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-44","nombre":"Papa Cruda","porcion":"100 g","carbohidratos":17.4,"proteina":2.0,"grasa":0.1,"calorias":77.0,"categoria":"Verdura","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-45","nombre":"Pepino","porcion":"100 g","carbohidratos":2.2,"proteina":0.6,"grasa":0.2,"calorias":12.0,"categoria":"Verdura","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-46","nombre":"Perejil","porcion":"100 g","carbohidratos":6.0,"proteina":3.0,"grasa":0.8,"calorias":36.0,"categoria":"Verdura","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-47","nombre":"Platano Maduro Cocido","porcion":"100 g","carbohidratos":31.9,"proteina":1.3,"grasa":0.4,"calorias":122.0,"categoria":"Verdura","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-48","nombre":"Platano Maduro Crudo","porcion":"100 g","carbohidratos":31.0,"proteina":1.0,"grasa":0.0,"calorias":128.0,"categoria":"Verdura","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-49","nombre":"Platano Verde Cocido","porcion":"100 g","carbohidratos":21.8,"proteina":1.0,"grasa":0.3,"calorias":85.0,"categoria":"Verdura","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-50","nombre":"Platano Verde Crudo","porcion":"100 g","carbohidratos":35.3,"proteina":1.2,"grasa":0.1,"calorias":132.0,"categoria":"Verdura","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-51","nombre":"Remolacha","porcion":"100 g","carbohidratos":9.5,"proteina":1.6,"grasa":0.1,"calorias":43.0,"categoria":"Verdura","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-52","nombre":"Repollo","porcion":"100 g","carbohidratos":5.4,"proteina":1.2,"grasa":0.2,"calorias":24.0,"categoria":"Verdura","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-53","nombre":"Tiquisque","porcion":"100 g","carbohidratos":23.0,"proteina":0.0,"grasa":0.0,"calorias":90.0,"categoria":"Verdura","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-54","nombre":"Tomate Cherry","porcion":"100 g","carbohidratos":3.0,"proteina":0.0,"grasa":0.2,"calorias":18.0,"categoria":"Verdura","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-55","nombre":"Tomates","porcion":"100 g","carbohidratos":4.6,"proteina":0.8,"grasa":0.3,"calorias":21.0,"categoria":"Verdura","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-56","nombre":"Vainicas cocidas","porcion":"100 g","carbohidratos":8.4,"proteina":2.5,"grasa":0.5,"calorias":40.0,"categoria":"Verdura","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-57","nombre":"Vainicas Crudas","porcion":"100 g","carbohidratos":7.1,"proteina":1.8,"grasa":0.1,"calorias":31.0,"categoria":"Verdura","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-58","nombre":"Yuca Blanca Cocida","porcion":"100 g","carbohidratos":37.5,"proteina":1.3,"grasa":2.0,"calorias":173.0,"categoria":"Verdura","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-59","nombre":"Yuca Cruda","porcion":"100 g","carbohidratos":38.1,"proteina":1.3,"grasa":0.2,"calorias":160.0,"categoria":"Verdura","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-60","nombre":"Zanahoria Cocida","porcion":"100 g","carbohidratos":8.2,"proteina":0.7,"grasa":0.2,"calorias":35.0,"categoria":"Verdura","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-61","nombre":"Zanahoria Cruda","porcion":"100 g","carbohidratos":9.4,"proteina":0.9,"grasa":0.1,"calorias":41.0,"categoria":"Verdura","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-62","nombre":"Zuchini cocido","porcion":"100 g","carbohidratos":3.9,"proteina":0.6,"grasa":0.1,"calorias":16.0,"categoria":"Verdura","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-63","nombre":"Allitas de pollo con piel crudas","porcion":"100 g","carbohidratos":0.0,"proteina":18.3,"grasa":15.9,"calorias":222.0,"categoria":"Proteina","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-64","nombre":"Carne De Res Semimagra cocida","porcion":"100 g","carbohidratos":0.0,"proteina":26.4,"grasa":16.8,"calorias":264.0,"categoria":"Proteina","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-65","nombre":"Carne Magra De Res cruda","porcion":"100 g","carbohidratos":0.0,"proteina":22.0,"grasa":3.5,"calorias":126.0,"categoria":"Proteina","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-66","nombre":"Carne Mechada Cocida","porcion":"100 g","carbohidratos":1.0,"proteina":22.0,"grasa":11.4,"calorias":229.0,"categoria":"Proteina","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-67","nombre":"Carne Molida Cocida","porcion":"100 g","carbohidratos":0.0,"proteina":29.0,"grasa":8.0,"calorias":193.0,"categoria":"Proteina","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-68","nombre":"Carne Molida de res CRUDA","porcion":"100 g","carbohidratos":0.7,"proteina":20.1,"grasa":7.7,"calorias":153.0,"categoria":"Proteina","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-69","nombre":"Cerdo, carne magra, horneada","porcion":"100 g","carbohidratos":0.0,"proteina":28.6,"grasa":9.1,"calorias":204.0,"categoria":"Proteina","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-70","nombre":"Cerdo, carne semimagra, cocida","porcion":"100 g","carbohidratos":0.0,"proteina":27.6,"grasa":17.2,"calorias":273.0,"categoria":"Proteina","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-71","nombre":"Chorizo De cerdo","porcion":"100 g","carbohidratos":1.1,"proteina":15.8,"grasa":22.8,"calorias":278.0,"categoria":"Proteina","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-72","nombre":"Chuleta de cerdo ahumada","porcion":"100 g","carbohidratos":2.0,"proteina":20.0,"grasa":10.0,"calorias":180.0,"categoria":"Proteina","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-73","nombre":"Chuleta De Cerdo Chuleta Cruda","porcion":"100 g","carbohidratos":0.0,"proteina":24.0,"grasa":14.0,"calorias":231.0,"categoria":"Proteina","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-74","nombre":"Chuleta De Cerdo Cocida","porcion":"100 g","carbohidratos":0.0,"proteina":27.1,"grasa":13.8,"calorias":240.0,"categoria":"Proteina","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-75","nombre":"Costillas De Res Crudas","porcion":"100 g","carbohidratos":0.0,"proteina":19.3,"grasa":19.1,"calorias":254.0,"categoria":"Proteina","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-76","nombre":"Huevo Entero","porcion":"1 Unidad","carbohidratos":1.0,"proteina":6.5,"grasa":5.0,"calorias":77.0,"categoria":"Proteina","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-77","nombre":"Huevos Claras","porcion":"1 Clara","carbohidratos":0.2,"proteina":3.6,"grasa":0.1,"calorias":17.0,"categoria":"Proteina","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-78","nombre":"Lengua de res Cocida","porcion":"100 g","carbohidratos":0.0,"proteina":19.3,"grasa":22.3,"calorias":278.0,"categoria":"Proteina","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-79","nombre":"Lengua de res cruda","porcion":"100 g","carbohidratos":3.7,"proteina":14.9,"grasa":16.1,"calorias":224.0,"categoria":"Proteina","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-80","nombre":"Lomo Res Magro Crudo","porcion":"100 g","carbohidratos":0.0,"proteina":20.8,"grasa":8.9,"calorias":169.0,"categoria":"Proteina","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-81","nombre":"Mondongo De res crudo","porcion":"100 g","carbohidratos":1.4,"proteina":14.0,"grasa":2.7,"calorias":90.0,"categoria":"Proteina","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-82","nombre":"Muslo de Pollo cocido sin piel","porcion":"100 g","carbohidratos":0.0,"proteina":25.0,"grasa":9.79,"calorias":195.0,"categoria":"Proteina","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-83","nombre":"Pechuga de Pollo Asada Cocida","porcion":"100 g","carbohidratos":0.0,"proteina":28.9,"grasa":3.0,"calorias":151.0,"categoria":"Proteina","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-84","nombre":"Pechuga de Pollo Asada Cruda","porcion":"100 g","carbohidratos":0.0,"proteina":21.3,"grasa":3.1,"calorias":119.0,"categoria":"Proteina","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-85","nombre":"Pechuga de Pollo Asada sin Piel","porcion":"100 g","carbohidratos":0.0,"proteina":28.9,"grasa":7.4,"calorias":190.0,"categoria":"Proteina","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-86","nombre":"Pollo Alas c/piel Fritas","porcion":"100 g","carbohidratos":2.4,"proteina":26.1,"grasa":22.2,"calorias":321.0,"categoria":"Proteina","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-87","nombre":"Pollo Alas s/piel Cocidas","porcion":"100 g","carbohidratos":0.0,"proteina":27.2,"grasa":7.2,"calorias":181.0,"categoria":"Proteina","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-88","nombre":"Queso Cottage (2 Cdas)","porcion":"30 g","carbohidratos":1.2,"proteina":4.5,"grasa":0.5,"calorias":27.0,"categoria":"Proteina","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-89","nombre":"Queso Ligth Turrialba","porcion":"30 g","carbohidratos":1.0,"proteina":6.7,"grasa":4.7,"calorias":73.0,"categoria":"Proteina","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-90","nombre":"Queso Semi Duro Del Prado","porcion":"30g","carbohidratos":5.0,"proteina":22.0,"grasa":11.0,"calorias":207.0,"categoria":"Proteina","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-91","nombre":"Res Hígado Cocido","porcion":"100 g","carbohidratos":5.1,"proteina":29.1,"grasa":5.3,"calorias":191.0,"categoria":"Proteina","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-92","nombre":"Res Higado Crudo","porcion":"100 g","carbohidratos":3.9,"proteina":20.4,"grasa":6.6,"calorias":135.0,"categoria":"Proteina","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-93","nombre":"Res, carne semimagra, cruda","porcion":"100 g","carbohidratos":0.0,"proteina":18.7,"grasa":17.2,"calorias":234.0,"categoria":"Proteina","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-94","nombre":"Tocineta cruda","porcion":"100 g","carbohidratos":0.7,"proteina":11.6,"grasa":45.0,"calorias":458.0,"categoria":"Proteina","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-95","nombre":"Tilapia Cocida","porcion":"100 g","carbohidratos":0.0,"proteina":26.0,"grasa":2.6,"calorias":128.0,"categoria":"Mariscos","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-96","nombre":"Camarones Crudo","porcion":"100 g","carbohidratos":0.9,"proteina":20.3,"grasa":1.7,"calorias":106.0,"categoria":"Mariscos","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-97","nombre":"Camarón Cocido","porcion":"100 g","carbohidratos":0.0,"proteina":20.9,"grasa":1.1,"calorias":99.0,"categoria":"Mariscos","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-98","nombre":"Trucha Cruda","porcion":"100 g","carbohidratos":0.0,"proteina":20.7,"grasa":6.6,"calorias":148.0,"categoria":"Mariscos","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-99","nombre":"Salmón Crudo","porcion":"100 g","carbohidratos":0.0,"proteina":19.9,"grasa":10.4,"calorias":179.0,"categoria":"Mariscos","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-100","nombre":"Salmon - Cocido","porcion":"100 g","carbohidratos":0.0,"proteina":25.0,"grasa":12.0,"calorias":208.0,"categoria":"Mariscos","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-101","nombre":"Calamar Crudo","porcion":"100 g","carbohidratos":3.1,"proteina":15.6,"grasa":1.4,"calorias":92.0,"categoria":"Mariscos","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-102","nombre":"Calamar Cocido","porcion":"100 g","carbohidratos":7.8,"proteina":17.9,"grasa":7.5,"calorias":175.0,"categoria":"Mariscos","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-103","nombre":"Corvina Cocida","porcion":"100 g","carbohidratos":0.0,"proteina":20.0,"grasa":3.0,"calorias":110.0,"categoria":"Mariscos","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-104","nombre":"Corvina Cruda","porcion":"100 g","carbohidratos":0.0,"proteina":17.7,"grasa":3.2,"calorias":104.0,"categoria":"Mariscos","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-105","nombre":"Alverjas","porcion":"100 g","carbohidratos":60.3,"proteina":24.5,"grasa":1.6,"calorias":341.0,"categoria":"Carbos","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-106","nombre":"Arroz Blanco Cocido","porcion":"100 g","carbohidratos":28.0,"proteina":2.7,"grasa":0.3,"calorias":130.0,"categoria":"Carbos","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-107","nombre":"Frijoles Blancos Cocidos","porcion":"100 g","carbohidratos":25.0,"proteina":9.7,"grasa":0.4,"calorias":139.0,"categoria":"Carbos","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-108","nombre":"Frijoles Negros Cocidos","porcion":"100 g","carbohidratos":24.0,"proteina":9.0,"grasa":1.0,"calorias":130.0,"categoria":"Carbos","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-109","nombre":"Frijoles Rojos Cocidos","porcion":"100 g","carbohidratos":22.8,"proteina":8.6,"grasa":0.5,"calorias":127.0,"categoria":"Carbos","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-110","nombre":"Gallo Pinto","porcion":"100 g","carbohidratos":27.0,"proteina":8.0,"grasa":4.0,"calorias":178.0,"categoria":"Carbos","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-111","nombre":"Grabanzos Cocidos","porcion":"100 g","carbohidratos":14.1,"proteina":6.1,"grasa":0.0,"calorias":91.0,"categoria":"Carbos","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-112","nombre":"Grabanzos crudos","porcion":"100 g","carbohidratos":61.0,"proteina":19.0,"grasa":6.0,"calorias":364.0,"categoria":"Carbos","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-113","nombre":"Grabanzos en lata","porcion":"100 g","carbohidratos":19.2,"proteina":4.0,"grasa":0.8,"calorias":98.0,"categoria":"Carbos","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-114","nombre":"Lentejas Crudas","porcion":"100 g","carbohidratos":60.1,"proteina":25.8,"grasa":1.1,"calorias":353.0,"categoria":"Carbos","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-115","nombre":"Lentejas Hervidas","porcion":"100 g","carbohidratos":20.0,"proteina":9.0,"grasa":0.4,"calorias":116.0,"categoria":"Carbos","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-116","nombre":"Pan Baguette","porcion":"100 g","carbohidratos":49.5,"proteina":8.2,"grasa":0.7,"calorias":237.0,"categoria":"Carbos","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-117","nombre":"Pasta cocida","porcion":"100 g","carbohidratos":31.0,"proteina":6.0,"grasa":0.0,"calorias":158.0,"categoria":"Carbos","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-118","nombre":"Quinoa Cocida","porcion":"100 g","carbohidratos":213.0,"proteina":44.0,"grasa":19.0,"calorias":120.0,"categoria":"Carbos","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-119","nombre":"Quinoa Cruda","porcion":"100 g","carbohidratos":68.9,"proteina":13.1,"grasa":5.8,"calorias":374.0,"categoria":"Carbos","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-120","nombre":"Pan de masa madre","porcion":"100g","carbohidratos":56.0,"proteina":12.0,"grasa":2.0,"calorias":290.0,"categoria":"Carbos","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-121","nombre":"Arroz con Leche","porcion":"100 g","carbohidratos":24.9,"proteina":3.3,"grasa":3.7,"calorias":146.0,"categoria":"Comidas típicas","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-122","nombre":"Conserva de Chiverre","porcion":"100 g","carbohidratos":45.0,"proteina":0.0,"grasa":0.0,"calorias":180.0,"categoria":"Comidas típicas","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-123","nombre":"Empanada de Chiverre Horneada","porcion":"1 Unidad","carbohidratos":24.1,"proteina":0.9,"grasa":8.6,"calorias":177.0,"categoria":"Comidas típicas","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-124","nombre":"Tamal Cerdo Costa Rica","porcion":"1 Tamal","carbohidratos":40.0,"proteina":12.0,"grasa":30.0,"calorias":478.0,"categoria":"Comidas típicas","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-125","nombre":"Pure De Papa (Con leche y margarina)","porcion":"100 g","carbohidratos":16.9,"proteina":2.0,"grasa":4.2,"calorias":113.0,"categoria":"Comidas típicas","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-126","nombre":"Pizza","porcion":"1 Slice","carbohidratos":32.0,"proteina":12.0,"grasa":11.0,"calorias":270.0,"categoria":"Comida rápida","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-127","nombre":"Papas fritas paqueñas Mc donald´s","porcion":"63 gramos","carbohidratos":27.9,"proteina":2.4,"grasa":10.5,"calorias":223.0,"categoria":"Comida rápida","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-128","nombre":"Papas fritas grandes Mc donald´s","porcion":"116 gramos","carbohidratos":48.0,"proteina":4.0,"grasa":16.0,"calorias":355.0,"categoria":"Comida rápida","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-129","nombre":"Queso burguesa Mac donald´s","porcion":"115 gramos","carbohidratos":33.1,"proteina":14.0,"grasa":12.7,"calorias":303.0,"categoria":"Comida rápida","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-130","nombre":"Triple con bacon Mac donald´s","porcion":"194 gramos","carbohidratos":37.0,"proteina":31.0,"grasa":24.0,"calorias":489.0,"categoria":"Comida rápida","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-131","nombre":"Cuarto de libra Mac donald´s","porcion":"195 gramos","carbohidratos":34.0,"proteina":34.0,"grasa":32.0,"calorias":564.0,"categoria":"Comida rápida","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-132","nombre":"Macnifica Mac donald´s","porcion":"195 gramos","carbohidratos":35.0,"proteina":32.0,"grasa":30.0,"calorias":537.0,"categoria":"Comida rápida","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-133","nombre":"Big Mac - Mac donald´s","porcion":"210 gramos","carbohidratos":49.0,"proteina":29.0,"grasa":27.0,"calorias":480.0,"categoria":"Comida rápida","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-134","nombre":"Mc Nuggets 4 piezas","porcion":"64 gramos","carbohidratos":7.8,"proteina":9.6,"grasa":9.3,"calorias":153.6,"categoria":"Comida rápida","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-135","nombre":"Nacion sushi - Spicy tuna roll","porcion":"10 rollos","carbohidratos":43.0,"proteina":40.0,"grasa":18.0,"calorias":500.0,"categoria":"Comida rápida","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-136","nombre":"Pf Changs spicy tuna roll","porcion":"10 rollos","carbohidratos":39.0,"proteina":19.0,"grasa":6.0,"calorias":370.0,"categoria":"Comida rápida","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-137","nombre":"Wopper","porcion":"1","carbohidratos":48.9,"proteina":30.4,"grasa":36.0,"calorias":641.0,"categoria":"Comida rápida","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-138","nombre":"Quesadilla de pollo taco bell","porcion":"1","carbohidratos":38.0,"proteina":27.0,"grasa":28.0,"calorias":510.0,"categoria":"Comida rápida","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-139","nombre":"Crunchwrap supreme","porcion":"1","carbohidratos":71.0,"proteina":16.0,"grasa":21.0,"calorias":530.0,"categoria":"Comida rápida","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-140","nombre":"Tacos de res el arreo","porcion":"2 unidades","carbohidratos":20.0,"proteina":8.0,"grasa":5.0,"calorias":155.0,"categoria":"Comida rápida","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-141","nombre":"Helado Mmio","porcion":"70","carbohidratos":21.0,"proteina":3.0,"grasa":17.0,"calorias":249.0,"categoria":"Helados Y postres","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-142","nombre":"In line delactomy","porcion":"100","carbohidratos":19.0,"proteina":4.0,"grasa":5.0,"calorias":127.0,"categoria":"Helados Y postres","fuente":"Nutricionista · Macros Nutri"},{"id":"nutri-143","nombre":"Pan Baguette 1 Barra","porcion":"100 g","carbohidratos":49.5,"proteina":8.2,"grasa":0.7,"calorias":237.0,"categoria":"Otros","fuente":"Nutricionista · Macros Nutri"}];
+const FOOD_CUSTOM_KEY='health_custom_foods_v1';
+let customFoods=[];
+try{const x=JSON.parse(localStorage.getItem(FOOD_CUSTOM_KEY)||'[]');if(Array.isArray(x))customFoods=x;}catch(e){}
+let foodComposition=[];
+const foodById=id=>[...BASE_FOODS,...customFoods].find(x=>x.id===id);
+const fRound=n=>Math.round(n*10)/10;
+const foodAll=()=>[...BASE_FOODS,...customFoods];
+function refreshFoodSearch(){
+ const q=document.getElementById('foodSearch').value.toLocaleLowerCase('es').trim();
+ const sel=document.getElementById('foodSelect');sel.replaceChildren();
+ foodAll().filter(x=>x.nombre.toLocaleLowerCase('es').includes(q)).slice(0,75).forEach(x=>{
+ const op=document.createElement('option');op.value=x.id;op.textContent=x.nombre+' · '+x.porcion;sel.appendChild(op);
+ });
+ if(sel.options.length)sel.selectedIndex=0;
+ refreshFoodInfo();
+}
+function refreshFoodInfo(){const x=foodById(document.getElementById('foodSelect').value);document.getElementById('foodInfo').textContent=x?`${x.fuente} · ${x.calorias} kcal · P ${x.proteina} g · C ${x.carbohidratos} g · G ${x.grasa} g por ${x.porcion}`:'Sin coincidencias';}
+function refreshFoodComposition(){
+ const box=document.getElementById('foodSelected');box.replaceChildren();
+ foodComposition.forEach((entry,i)=>{const x=foodById(entry.id);if(!x)return;const line=document.createElement('div');line.textContent=`${x.nombre} × ${entry.qty} (${fRound(x.calorias*entry.qty)} kcal) `;const b=document.createElement('button');b.type='button';b.className='secondary';b.textContent='Quitar';b.addEventListener('click',()=>{foodComposition.splice(i,1);refreshFoodComposition();});line.appendChild(b);box.appendChild(line);});
+ const totals={proteina:0,carbohidratos:0,grasa:0,calorias:0};
+ foodComposition.forEach(e=>{const x=foodById(e.id);if(x)Object.keys(totals).forEach(k=>totals[k]+=x[k]*e.qty);});
+ for(const [key,id] of Object.entries({proteina:'cProteina',carbohidratos:'cCarbohidratos',grasa:'cGrasa',calorias:'cCalorias'}))if(foodComposition.length)document.getElementById(id).value=fRound(totals[key]);
+ if(foodComposition.length){document.getElementById('cDetalle').value=foodComposition.map(e=>foodById(e.id).nombre+' × '+e.qty+' porción(es)').join(', ');document.getElementById('cPorcion').value=foodComposition.map(e=>foodById(e.id).porcion+' × '+e.qty).join('; ');}
+}
+document.getElementById('foodSearch').addEventListener('input',refreshFoodSearch);
+document.getElementById('foodSelect').addEventListener('change',refreshFoodInfo);
+document.getElementById('foodAdd').addEventListener('click',()=>{const id=document.getElementById('foodSelect').value,qty=Number(document.getElementById('foodQty').value);if(!foodById(id)||!Number.isFinite(qty)||qty<=0){alert('Selecciona un alimento y una cantidad válida.');return;}const e=foodComposition.find(x=>x.id===id);if(e)e.qty+=qty;else foodComposition.push({id,qty});refreshFoodComposition();});
+document.getElementById('foodNewToggle').addEventListener('click',()=>{const p=document.getElementById('foodNewPanel');p.style.display=p.style.display==='none'?'block':'none';});
+document.getElementById('foodSaveNew').addEventListener('click',()=>{
+ const nombre=document.getElementById('foodNewName').value.trim(),porcion=document.getElementById('foodNewPortion').value.trim();
+ const fields=['foodNewCarbs','foodNewProtein','foodNewFat','foodNewCalories'];
+ if(!nombre||!porcion||fields.some(id=>document.getElementById(id).value.trim()===''||!Number.isFinite(Number(document.getElementById(id).value))||Number(document.getElementById(id).value)<0)){alert('Completa el nombre, la porción y los cuatro valores nutricionales.');return;}
+ if(foodAll().some(x=>x.nombre.toLocaleLowerCase('es')===nombre.toLocaleLowerCase('es')&&x.porcion.toLocaleLowerCase('es')===porcion.toLocaleLowerCase('es'))){alert('Ya existe un alimento con ese nombre y porción.');return;}
+ const vals=fields.map(id=>Number(document.getElementById(id).value));customFoods.push({id:'personal-'+Date.now(),nombre,porcion,carbohidratos:vals[0],proteina:vals[1],grasa:vals[2],calorias:vals[3],categoria:'Personalizado',fuente:'Ingreso manual · verificar etiqueta o referencia'});
+ localStorage.setItem(FOOD_CUSTOM_KEY,JSON.stringify(customFoods));document.getElementById('foodSearch').value=nombre;refreshFoodSearch();document.getElementById('foodNewPanel').style.display='none';
+});
+document.getElementById('formComida').addEventListener('submit',()=>{foodComposition=[];refreshFoodComposition();});
+document.getElementById('formComida').addEventListener('reset',()=>{foodComposition=[];refreshFoodComposition();});
+refreshFoodSearch();
+</script>
+<script>
+document.querySelectorAll('.calm-module').forEach(card=>{
+ const button=card.querySelector(':scope > .calm-head > button');
+ const key='healthCalm_'+card.dataset.module;
+ const stored=localStorage.getItem(key);
+ if(stored!==null)card.classList.toggle('calm-collapsed',stored==='1');
+ function refresh(){const closed=card.classList.contains('calm-collapsed');button.textContent=closed?'Mostrar +':'Ocultar −';button.setAttribute('aria-expanded',String(!closed));}
+ refresh();button.addEventListener('click',()=>{card.classList.toggle('calm-collapsed');localStorage.setItem(key,card.classList.contains('calm-collapsed')?'1':'0');refresh();});
+});
+</script><script>if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(console.warn));}</script>
+</body>
+</html>
