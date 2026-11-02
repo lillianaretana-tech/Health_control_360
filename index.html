@@ -4905,5 +4905,9 @@ document.addEventListener('DOMContentLoaded', () => {
   </div>
 </div>
 
+
+<style>#hc-nutrition{position:fixed;inset:0;z-index:9900;background:#f7f1e9;display:none;flex-direction:column;color:#3c3029}#hc-nutrition.open{display:flex}#hc-nutrition .hcbar{display:flex;align-items:center;gap:12px;padding:12px 16px;background:#fff;box-shadow:0 2px 10px #0001}#hc-nutrition iframe{border:0;width:100%;flex:1;background:#f7f1e9}#hc-open{position:fixed;bottom:85px;left:12px;z-index:9890;border:0;border-radius:16px;padding:12px 15px;background:#f5dfbd;color:#4b3322;font:700 13px system-ui;box-shadow:0 4px 20px #0006}#hc-nutrition .hcbar button{border:0;border-radius:12px;background:#3e3027;color:white;padding:10px 14px;font-weight:700}@media(min-width:850px){#hc-open{bottom:24px}}</style>
+<button id="hc-open" onclick="document.getElementById('hc-nutrition').classList.add('open')">🥗 Alimentación y calorías</button>
+<div id="hc-nutrition" role="dialog" aria-label="Alimentación y calorías"><div class="hcbar"><button onclick="document.getElementById('hc-nutrition').classList.remove('open')">← Volver</button><strong>🥗 Mi alimentación · catálogo y calorías</strong></div><iframe src="./sources/health-control-original.html" title="Diario nutricional Health Control" loading="lazy"></iframe></div>
 </body>
 </html>
